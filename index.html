@@ -590,7 +590,7 @@
     }
     $('tblCount').textContent = rows.length + ' รายการ';
     $('tblEmpty').hidden = rows.length>0;
-    var lim = Math.min(rows.length, 400);
+    var lim = rows.length;
     for(var i=0;i<lim;i++){
       var d=rows[i];
       var tr=document.createElement('tr');
@@ -644,7 +644,7 @@
   function renderCards(rows){
     var cg=$('cardGrid');
     if(!rows.length){ cg.innerHTML='<div class="empty" style="grid-column:1/-1">ไม่พบสินค้าตามเงื่อนไข — ลองปรับตัวกรอง</div>'; return; }
-    var lim=Math.min(rows.length,400), html='';
+    var lim=rows.length, html='';
     for(var i=0;i<lim;i++){ var d=rows[i];
       var open = d.url ? ' href="'+esc(d.url)+'" target="_blank" rel="noopener"' : '';
       html += '<a class="pcard"'+open+'>'
