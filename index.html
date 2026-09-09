@@ -283,7 +283,7 @@
     </div>
 
   <div class="filters">
-    <label class="fld"><span>คำค้นหา (Keyword)</span>
+    <label class="fld"><span>ประเภทสินค้า</span>
       <select id="fQuery" class="ctl"><option value="">ทั้งหมด</option></select>
     </label>
     <label class="fld"><span>ร้าน (Seller)</span>
@@ -728,7 +728,7 @@
   function csvEsc(v){ v=(v==null?'':String(v)); return /[",\n\r]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
   $('csvBtn').addEventListener('click', function(){
     var rows=currentRows;
-    var head=['คำค้น','ชื่อสินค้า','ขนาด/สี','ราคาและขายแล้ว(ชิ้น) วันที่','ราคาขาย','%ส่วนลด','ลดเหลือ(Net)','ขายแล้ว(ชิ้น)','ร้าน','เรตติ้ง','ลิงก์สินค้า'];
+    var head=['ประเภทสินค้า','ชื่อสินค้า','ขนาด/สี','ราคาและขายแล้ว(ชิ้น) วันที่','ราคาขาย','%ส่วนลด','ลดเหลือ(Net)','ขายแล้ว(ชิ้น)','ร้าน','เรตติ้ง','ลิงก์สินค้า'];
     var lines=[head.map(csvEsc).join(',')];
     rows.forEach(function(d){
       var list=(d.op!=null?d.op:d.p);
