@@ -280,8 +280,22 @@
       problems: txt('problems'), suggestions: txt('suggestions')
     };
   }
+  // ---------- ปิดรับคำตอบ ----------
+  var closeAt = L.closeAt ? new Date(L.closeAt) : null;
+  function isClosed(){ return closeAt && Date.now() > closeAt.getTime(); }
+  function showClosed(){
+    $('formArea').hidden = true; $('intro').hidden = true; $('already').hidden = true; $('done').hidden = true; $('closed').hidden = false;
+    window.scrollTo({ top:0 });
+  }
+  if(closeAt){
+    $('deadline').hidden = false;
+    $('deadline').textContent = '⏰ ปิดรับคำตอบ ' + L.closeText;
+    $('closedWhen').textContent = L.closeText;
+  }
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
+    if(isClosed()){ showClosed(); return; }
     for(var i = 0; i < steps.length; i++){ if(!validate(steps[i])){ show(i); validate(steps[i]); return; } }
     var btn = $('submitBtn'), err = $('submitErr');
     btn.disabled = true; btn.textContent = 'กำลังส่ง...'; err.hidden = true;
@@ -290,11 +304,15 @@
       headers: { 'apikey': S.anonKey, 'Authorization': 'Bearer ' + S.anonKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify(payload())
     }).then(function(r){
-      if(!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ' ' + t.slice(0, 160)); });
+      if(!r.ok) return r.text().then(function(t){
+        if(isClosed() || /row-level security/i.test(t)){ var x = new Error('closed'); x.closed = true; throw x; }
+        throw new Error('HTTP ' + r.status + ' ' + t.slice(0, 160));
+      });
       store.del(DRAFT); store.set(SENT, new Date().toISOString());
       $('formArea').hidden = true; $('intro').hidden = true; $('done').hidden = false;
       window.scrollTo({ top:0, behavior:'smooth' });
     }).catch(function(ex){
+      if(ex.closed){ showClosed(); return; }
       err.textContent = 'ส่งไม่สำเร็จ กรุณาลองใหม่อีกครั้ง (คำตอบยังบันทึกอยู่ในเครื่อง) — ' + ex.message;
       err.hidden = false;
     }).then(function(){ btn.disabled = false; btn.textContent = 'ส่งแบบประเมิน ✓'; });
@@ -306,6 +324,7 @@
   });
   var savedStep = restoreDraft();
   computeSteps();
-  if(store.get(SENT) && !savedStep){ $('already').hidden = false; $('formArea').hidden = true; $('intro').hidden = true; }
+  if(isClosed()) showClosed();
+  else if(store.get(SENT) && !savedStep){ $('already').hidden = false; $('formArea').hidden = true; $('intro').hidden = true; }
   else show(Math.max(0, steps.indexOf(savedStep)));
 })();

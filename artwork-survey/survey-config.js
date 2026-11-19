@@ -14,7 +14,8 @@ window.SURVEY = {
 
   links: {
     wholesale: { label: 'ลิงก์ 1 · ค้าส่ง', groups: ['wholesale'], path: '/wholesale', time: '5–6 นาที' },
-    channels:  { label: 'ลิงก์ 2 · Retail / MarketPlace / Website', groups: ['retail', 'marketplace', 'website'], path: '/channels', time: '6 นาที + 2–3 นาทีต่อกลุ่ม' }
+    channels:  { label: 'ลิงก์ 2 · Retail / MarketPlace / Website', groups: ['retail', 'marketplace', 'website'], path: '/channels', time: '6 นาที + 2–3 นาทีต่อกลุ่ม',
+                 closeAt: '2026-11-20T23:59:59+07:00', closeText: 'วันที่ 20 พ.ย. 69 เวลา 23.59 น.' }
   },
 
   roles: ['ผู้จัดการ / หัวหน้าทีม', 'พนักงานขาย / Sales', 'Admin / ประสานงาน'],

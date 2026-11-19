@@ -28,7 +28,7 @@
     <h1>แบบประเมิน Artwork Promotion ปี 2569 · Retail / MarketPlace / Website</h1>
     <p class="muted" style="margin:0">เลือกกลุ่มที่คุณรับผิดชอบ ดู Artwork ของกลุ่มนั้นครบทุกเดือน (ม.ค.–พ.ย. 2569) แล้วให้คะแนน
       ทุกคำตอบจะนำไปปรับปรุงการออกแบบ <b style="color:var(--ink)">ปี 2570</b> และสรุปนำเสนอผู้บริหาร</p>
-    <div class="tags"><span>⏱ ประมาณ 6 นาที + 2–3 นาทีต่อกลุ่ม</span><span>🔒 ไม่ระบุตัวตน</span><span>💾 บันทึกร่างอัตโนมัติ</span></div>
+    <div class="tags"><span>⏱ ประมาณ 6 นาที + 2–3 นาทีต่อกลุ่ม</span><span>🔒 ไม่ระบุตัวตน</span><span>💾 บันทึกร่างอัตโนมัติ</span><span id="deadline" class="due" hidden></span></div>
   </section>
 
   <section class="card" id="already" hidden>
@@ -51,6 +51,12 @@
       <div class="submit-err" id="submitErr" hidden></div>
     </form>
   </div>
+
+  <section class="card done" id="closed" hidden>
+    <div class="ok" style="background:var(--coral-soft);color:var(--coral)">⏰</div>
+    <h2>แบบประเมินนี้ปิดรับคำตอบแล้ว</h2>
+    <p class="muted">ปิดรับคำตอบเมื่อ <span id="closedWhen"></span> ขอบคุณที่ให้ความสนใจครับ</p>
+  </section>
 
   <section class="card done" id="done" hidden>
     <div class="ok">✓</div>
