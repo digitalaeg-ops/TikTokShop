@@ -4,6 +4,10 @@
     {
       "source": "/results",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/aw/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
     }
   ]
 }

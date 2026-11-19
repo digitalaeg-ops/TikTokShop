@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบประเมิน Artwork ปี 2569 · Retail / MarketPlace / Website | SANWA</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="แบบประเมินผล Artwork Promotion ปี 2569 สำหรับทีม Retail, MarketPlace และ Website — ผลนำไปปรับปรุงงานออกแบบปี 2570">
+<meta property="og:title" content="แบบประเมิน Artwork Promotion ปี 2569 · ทีม Retail / MarketPlace / Website">
+<meta property="og:description" content="ใช้เวลาประมาณ 6 นาที + 2–3 นาทีต่อกลุ่ม · ไม่ระบุตัวตน · ดู Artwork ก่อนตอบ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="form.css">
+<link rel="stylesheet" href="gallery.css">
+</head>
+<body data-link="channels">
+<header class="topbar">
+  <img src="logosanwa.png" alt="SANWA อุปกรณ์ประปาคุณภาพสูง">
+  <span class="div"></span>
+  <span class="ttl">Artwork Promotion <span>· ประเมินผลปี 2569</span></span>
+</header>
+
+<main class="wrap form">
+  <section class="card hero" id="intro">
+    <span class="linkchip">ลิงก์ 2 · ทีม Retail / MarketPlace / Website</span>
+    <h1>แบบประเมิน Artwork Promotion ปี 2569 · Retail / MarketPlace / Website</h1>
+    <p class="muted" style="margin:0">เลือกกลุ่มที่คุณรับผิดชอบ ดู Artwork ของกลุ่มนั้นครบทุกเดือน (ม.ค.–พ.ย. 2569) แล้วให้คะแนน
+      ทุกคำตอบจะนำไปปรับปรุงการออกแบบ <b style="color:var(--ink)">ปี 2570</b> และสรุปนำเสนอผู้บริหาร</p>
+    <div class="tags"><span>⏱ ประมาณ 6 นาที + 2–3 นาทีต่อกลุ่ม</span><span>🔒 ไม่ระบุตัวตน</span><span>💾 บันทึกร่างอัตโนมัติ</span></div>
+  </section>
+
+  <section class="card" id="already" hidden>
+    <h2>คุณส่งแบบประเมินจากเครื่องนี้แล้ว ขอบคุณครับ 🙏</h2>
+    <p class="muted">ถ้าใช้เครื่องร่วมกับเพื่อนร่วมทีม และอีกคนยังไม่ได้ตอบ กดปุ่มด้านล่างเพื่อเริ่มแบบประเมินใหม่</p>
+    <button class="btn primary" type="button" id="againBtn">เริ่มตอบแบบประเมินใหม่</button>
+  </section>
+
+  <div id="formArea">
+    <div class="prog" id="prog"></div>
+    <div class="progtxt"><span>ขั้นที่ <b id="stepNo">1</b> / <span id="stepAll">4</span> · <span id="stepName"></span></span><span class="saved" id="saved"></span></div>
+    <form id="f" novalidate autocomplete="off">
+      <div id="steps"></div>
+      <div class="nav">
+        <button class="btn" type="button" id="backBtn">← ย้อนกลับ</button>
+        <span class="grow"></span>
+        <button class="btn primary" type="button" id="nextBtn">ถัดไป →</button>
+        <button class="btn primary" type="submit" id="submitBtn" hidden>ส่งแบบประเมิน ✓</button>
+      </div>
+      <div class="submit-err" id="submitErr" hidden></div>
+    </form>
+  </div>
+
+  <section class="card done" id="done" hidden>
+    <div class="ok">✓</div>
+    <h2>ส่งแบบประเมินเรียบร้อย ขอบคุณครับ</h2>
+    <p class="muted">ความคิดเห็นของคุณจะถูกนำไปปรับปรุง Artwork Promotion ปี 2570 ให้ตอบโจทย์ทีมและลูกค้ามากขึ้น</p>
+  </section>
+</main>
+<div class="footer">SANWA Marketing Online · แบบประเมิน Artwork Promotion ปี 2569</div>
+
+<script src="survey-config.js"></script>
+<script src="aw-data.js"></script>
+<script src="gallery.js"></script>
+<script src="form.js"></script>
+</body>
+</html>
