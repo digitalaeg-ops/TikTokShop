@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>สรุปผลประเมิน Artwork Promotion ปี 2569 | SANWA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .gate{max-width:440px; margin:8vh auto 0}
+  .gate input{width:100%; font-size:1.05rem; letter-spacing:.12em; text-transform:uppercase; padding:11px 14px;
+    border:1.5px solid var(--line-strong); border-radius:10px; background:var(--surface-2); margin:12px 0}
+  .gate input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .gate .err{color:var(--coral); font-size:.86rem; margin-top:10px}
+
+  .bar-top{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-bottom:16px}
+  .seg{display:inline-flex; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:3px}
+  .seg button{border:none; background:none; padding:7px 14px; border-radius:8px; font-size:.88rem; font-weight:500; cursor:pointer; color:var(--muted)}
+  .seg button[aria-pressed="true"]{background:var(--accent); color:#fff}
+  .seg button:not([aria-pressed="true"]):hover{color:var(--accent-deep)}
+  .meta{font-size:.84rem; color:var(--muted)}
+
+  .kpis{display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); margin-bottom:16px}
+  .kpi{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+  .kpi .k{font-size:.76rem; color:var(--muted); font-weight:500}
+  .kpi .v{font-size:1.7rem; font-weight:700; line-height:1.15; margin-top:2px; color:var(--accent-deep)}
+  .kpi .v small{font-size:.85rem; color:var(--muted); font-weight:500}
+  .kpi .s{font-size:.76rem; color:var(--muted); margin-top:3px}
+
+  .insights ul{margin:6px 0 0; padding-left:1.15em}
+  .insights li{margin:5px 0}
+  .insights b{color:var(--accent-deep)}
+
+  .grid2{display:grid; gap:16px; grid-template-columns:1fr}
+  @media (min-width:980px){ .grid2{grid-template-columns:1fr 1fr} }
+  .grid2 .card{margin-bottom:0}
+  .sec{margin-bottom:16px}
+  .card .sub{font-size:.8rem; color:var(--muted); margin:-8px 0 12px}
+
+  .tblwrap{overflow-x:auto}
+  table.heat{width:100%; border-collapse:separate; border-spacing:4px; font-size:.86rem}
+  table.heat th{font-weight:600; color:var(--muted); font-size:.78rem; padding:4px 6px; text-align:center; white-space:nowrap}
+  table.heat th.lbl{text-align:left; color:var(--ink); font-weight:500; font-size:.86rem; white-space:normal; min-width:200px}
+  table.heat th.sel{color:var(--accent-deep)}
+  table.heat td{text-align:center; border-radius:8px; padding:7px 6px; min-width:76px}
+  table.heat td b{display:block; font-size:1rem}
+  table.heat td small{font-size:.68rem; opacity:.8}
+  table.heat td.na{background:var(--surface-2); color:var(--line-strong)}
+  table.heat td.sel{box-shadow:inset 0 0 0 2px var(--ink)}
+  .legend{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.74rem; color:var(--muted); margin-top:10px}
+  .legend i{display:inline-block; width:14px; height:10px; border-radius:3px; vertical-align:-1px; margin-right:4px}
+
+  .bars{display:flex; flex-direction:column; gap:9px}
+  .barrow{display:grid; grid-template-columns:minmax(120px,1.1fr) 2fr auto; gap:10px; align-items:center; font-size:.86rem}
+  .barrow .bt{height:14px; background:var(--surface-2); border-radius:7px; overflow:hidden}
+  .barrow .bt i{display:block; height:100%; background:var(--accent); border-radius:7px}
+  .barrow .bv{font-weight:600; white-space:nowrap; min-width:72px; text-align:right}
+  .barrow .bv small{color:var(--muted); font-weight:400}
+  @media (max-width:560px){ .barrow{grid-template-columns:1fr auto} .barrow .bt{grid-column:1 / -1; grid-row:2} }
+
+  .tabs{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px}
+  .tabs button{border:1.5px solid var(--line-strong); background:var(--surface); border-radius:999px; padding:6px 14px; font-size:.84rem; cursor:pointer}
+  .tabs button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#fff}
+  .cms{display:flex; flex-direction:column; gap:10px; max-height:560px; overflow-y:auto; padding-right:4px}
+  .cm{border:1px solid var(--line); border-radius:10px; padding:10px 14px; background:var(--surface-2)}
+  .cm-h{font-size:.76rem; color:var(--muted); margin-bottom:4px; display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .cm p{margin:0; white-space:pre-wrap; word-break:break-word}
+  .badge{font-size:.72rem; font-weight:600; padding:2px 8px; border-radius:999px; color:#fff}
+  .b-0{background:#016673} .b-1{background:#B7791F} .b-2{background:#6B5BA8}
+  .empty{color:var(--muted); font-size:.88rem; padding:18px; text-align:center; border:1.5px dashed var(--line-strong); border-radius:10px}
+
+  .print-head{display:none}
+  @media print{
+    body{background:#fff}
+    .topbar .right, .bar-top .seg, .no-print, .gate{display:none !important}
+    .print-head{display:block; margin-bottom:10px}
+    .card, .kpi{box-shadow:none; break-inside:avoid}
+    .cms{max-height:none; overflow:visible}
+    .wrap.wide{max-width:none; padding:0}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <img src="logosanwa.png" alt="SANWA อุปกรณ์ประปาคุณภาพสูง">
+  <span class="div"></span>
+  <span class="ttl">Artwork Promotion <span>· สรุปผลประเมินปี 2569</span></span>
+  <div class="right" id="tools" hidden>
+    <button class="btn sm" type="button" id="copyLink" title="คัดลอกลิงก์ฟอร์มไปส่งให้ทีม">🔗 ลิงก์แบบประเมิน</button>
+    <button class="btn sm" type="button" id="refresh">↻ รีเฟรช</button>
+    <button class="btn sm" type="button" id="csv">⬇ CSV</button>
+    <button class="btn sm" type="button" id="print">🖨 พิมพ์ / PDF</button>
+    <button class="btn sm" type="button" id="logout">ออก</button>
+  </div>
+</header>
+
+<main class="wrap wide">
+  <section class="card gate" id="gate">
+    <h2>สรุปผลแบบประเมิน (สำหรับผู้ดูแล)</h2>
+    <p class="muted small" style="margin:0">กรอกรหัสเข้าดูผล — คำตอบทั้งหมดเปิดดูได้เฉพาะผู้มีรหัสเท่านั้น</p>
+    <form id="gateForm" autocomplete="off">
+      <input id="code" type="password" inputmode="text" placeholder="XXXX-XXXX-XXXX" aria-label="รหัสเข้าดูผล" required>
+      <button class="btn primary" type="submit" id="gateBtn" style="width:100%">เข้าดูผล</button>
+    </form>
+    <div class="err" id="gateErr" hidden></div>
+  </section>
+
+  <div id="dash" hidden>
+    <div class="print-head">
+      <h2 style="margin:0">สรุปผลแบบประเมิน Artwork Promotion ปี 2569</h2>
+      <div class="muted small" id="printMeta"></div>
+    </div>
+
+    <div class="bar-top">
+      <div class="seg" id="teamSeg" role="group" aria-label="กรองตามทีม"></div>
+      <span class="meta" id="meta"></span>
+    </div>
+
+    <div id="emptyAll" class="card" hidden>
+      <h3>ยังไม่มีคำตอบเข้ามา</h3>
+      <p class="muted" style="margin:0 0 12px">ส่งลิงก์แบบประเมินให้ทีมค้าส่ง / Retail / MarketPlace — ผลจะแสดงที่หน้านี้ทันทีที่มีคนตอบ (กด ↻ รีเฟรช)</p>
+      <button class="btn primary sm" type="button" id="copyLink2">🔗 คัดลอกลิงก์แบบประเมิน</button>
+    </div>
+
+    <div id="content">
+      <div class="kpis" id="kpis"></div>
+
+      <section class="card insights sec">
+        <h3>ข้อสรุปสำคัญ <span class="muted small" id="insTeam"></span></h3>
+        <div id="insights"></div>
+      </section>
+
+      <section class="card sec">
+        <h3>คะแนนคุณภาพการออกแบบ แยกตามทีม</h3>
+        <p class="sub">ค่าเฉลี่ย 1–5 · ช่องที่มีกรอบ = ทีมที่เลือกอยู่ · n = จำนวนคำตอบ</p>
+        <div class="tblwrap" id="heatCrit"></div>
+        <div class="legend" id="legend1"></div>
+      </section>
+
+      <section class="card sec">
+        <h3>ความพึงพอใจรายช่องทาง แยกตามทีม</h3>
+        <p class="sub">เฉลี่ยจากผู้ที่ใช้ช่องทางนั้นจริง · ช่อง “–” = ทีมนั้นไม่มีผู้ใช้ช่องทางนี้</p>
+        <div class="tblwrap" id="heatCh"></div>
+        <div class="legend" id="legend2"></div>
+      </section>
+
+      <div class="grid2 sec">
+        <section class="card"><h3>สิ่งที่อยากให้ปรับปรุงในปี 2570</h3><p class="sub">% ของผู้ตอบ (เลือกได้สูงสุด 3 ข้อ)</p><div class="bars" id="bImprove"></div></section>
+        <section class="card"><h3>รูปแบบงานที่อยากได้เพิ่ม</h3><p class="sub">% ของผู้ตอบ (เลือกได้หลายข้อ)</p><div class="bars" id="bFormats"></div></section>
+      </div>
+      <div class="grid2 sec">
+        <section class="card"><h3>เทียบกับปี 2568</h3><div class="bars" id="bVs"></div></section>
+        <section class="card"><h3>ต้องการรับงานล่วงหน้า</h3><div class="bars" id="bLead"></div></section>
+      </div>
+      <div class="grid2 sec">
+        <section class="card"><h3>ช่องทางที่ใช้งาน</h3><p class="sub">% ของผู้ตอบที่ใช้แต่ละช่องทาง</p><div class="bars" id="bCh"></div></section>
+        <section class="card"><h3>ความถี่การใช้งาน Artwork</h3><div class="bars" id="bFreq"></div></section>
+      </div>
+
+      <section class="card sec">
+        <h3>ความคิดเห็นจากทีม</h3>
+        <div class="tabs" id="cmTabs"></div>
+        <div class="cms" id="cms"></div>
+      </section>
+    </div>
+  </div>
+</main>
+<div class="footer">SANWA Marketing Online · ข้อมูลจากแบบประเมิน Artwork Promotion ปี 2569</div>
+
+<script src="survey-config.js"></script>
+<script>
+(function(){
+  var S = window.SURVEY, CODEKEY = 'artworkSurvey' + S.year + 'Code', ALL = 'ทั้งหมด';
+  var ss = {
+    get: function(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
+    set: function(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} },
+    del: function(k){ try{ sessionStorage.removeItem(k); }catch(e){} }
+  };
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function avg(a){ return a.length ? a.reduce(function(x,y){ return x + y; }, 0) / a.length : null; }
+  function pct(a, b){ return b ? Math.round(a / b * 100) : 0; }
+  function f1(n){ return n == null ? '–' : n.toFixed(1); }
+  function f2(n){ return n == null ? '–' : n.toFixed(2); }
+  function num(v){ return typeof v === 'number' && !isNaN(v) ? v : null; }
+  function teamIdx(t){ return S.teams.indexOf(t); }
+  function chLabel(id){ for(var i = 0; i < S.channels.length; i++) if(S.channels[i].id === id) return S.channels[i].label; return id; }
+
+  var all = [], team = ALL, tab = 'suggestions', fetchedAt = null;
+  function rows(){ return team === ALL ? all : all.filter(function(r){ return r.team === team; }); }
+
+  // ---------- data ----------
+  function load(code){
+    return fetch(S.supabaseUrl + '/rest/v1/rpc/get_artwork_survey_results', {
+      method: 'POST',
+      headers: { 'apikey': S.anonKey, 'Authorization': 'Bearer ' + S.anonKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_code: code })
+    }).then(function(r){
+      if(r.ok) return r.json();
+      return r.json().catch(function(){ return {}; }).then(function(j){
+        var e = new Error(j.message || ('HTTP ' + r.status)); e.invalid = /invalid code/i.test(j.message || ''); throw e;
+      });
+    });
+  }
+  function enter(code, data){
+    ss.set(CODEKEY, code); all = data; fetchedAt = new Date();
+    $('gate').hidden = true; $('dash').hidden = false; $('tools').hidden = false;
+    render();
+  }
+  $('gateForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var code = $('code').value.trim().toUpperCase(), btn = $('gateBtn'), err = $('gateErr');
+    if(!code) return;
+    btn.disabled = true; btn.textContent = 'กำลังตรวจสอบ...'; err.hidden = true;
+    load(code).then(function(d){ enter(code, d); }).catch(function(ex){
+      err.textContent = ex.invalid ? 'รหัสไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง' : ('เชื่อมต่อฐานข้อมูลไม่ได้ — ' + ex.message);
+      err.hidden = false;
+    }).then(function(){ btn.disabled = false; btn.textContent = 'เข้าดูผล'; });
+  });
+
+  // ---------- colours ----------
+  var SCALE = [
+    { min:4.5, bg:'#016673', fg:'#fff', label:'4.5–5.0 ดีมาก' },
+    { min:4.0, bg:'#2FA6B5', fg:'#fff', label:'4.0–4.4 ดี' },
+    { min:3.5, bg:'#A9D8DE', fg:'#101619', label:'3.5–3.9 ค่อนข้างดี' },
+    { min:3.0, bg:'#F6E3B4', fg:'#101619', label:'3.0–3.4 พอใช้' },
+    { min:2.5, bg:'#F7C6A3', fg:'#101619', label:'2.5–2.9 ควรปรับปรุง' },
+    { min:0,   bg:'#F1A7A3', fg:'#101619', label:'ต่ำกว่า 2.5 ต้องปรับปรุงมาก' }
+  ];
+  function col(a){ for(var i = 0; i < SCALE.length; i++) if(a >= SCALE[i].min) return SCALE[i]; return SCALE[SCALE.length - 1]; }
+  var legendHtml = SCALE.map(function(s){ return '<span><i style="background:' + s.bg + '"></i>' + s.label + '</span>'; }).join('');
+  $('legend1').innerHTML = legendHtml; $('legend2').innerHTML = legendHtml;
+
+  // ---------- renderers ----------
+  function heat(elId, items, score){
+    var cols = S.teams.concat(['รวม']);
+    var h = '<table class="heat"><thead><tr><th class="lbl">หัวข้อ</th>' + cols.map(function(c){
+      return '<th class="' + (c === team ? 'sel' : '') + '">' + esc(c) + '</th>';
+    }).join('') + '</tr></thead><tbody>';
+    items.forEach(function(it){
+      h += '<tr><th class="lbl">' + esc(it.label) + '</th>';
+      cols.forEach(function(c){
+        var rs = c === 'รวม' ? all : all.filter(function(r){ return r.team === c; });
+        var v = rs.map(function(r){ return score(r, it.id); }).filter(function(x){ return x != null; });
+        var a = avg(v), sel = c === team ? ' sel' : '';
+        if(a == null){ h += '<td class="na' + sel + '">–</td>'; return; }
+        var k = col(a);
+        h += '<td class="' + sel.trim() + '" style="background:' + k.bg + ';color:' + k.fg + '" title="' + esc(it.label + ' · ' + c + ': ' + a.toFixed(2) + ' จาก ' + v.length + ' คำตอบ') + '"><b>' + a.toFixed(1) + '</b><small>n=' + v.length + '</small></td>';
+      });
+      h += '</tr>';
+    });
+    $(elId).innerHTML = h + '</tbody></table>';
+  }
+  function bars(elId, options, rs, list, sort){
+    var n = rs.length;
+    var c = options.map(function(o){ return { o:o, n: rs.filter(function(r){ return list(r).indexOf(o) > -1; }).length }; });
+    if(sort) c.sort(function(a, b){ return b.n - a.n; });
+    var max = Math.max(1, Math.max.apply(null, c.map(function(x){ return x.n; })));
+    $(elId).innerHTML = n ? c.map(function(x){
+      return '<div class="barrow"><span class="bl">' + esc(x.o) + '</span><span class="bt"><i style="width:' + (x.n / max * 100).toFixed(1) + '%"></i></span>' +
+        '<span class="bv">' + x.n + ' <small>(' + pct(x.n, n) + '%)</small></span></div>';
+    }).join('') : '<div class="empty">ยังไม่มีข้อมูล</div>';
+  }
+  function critAvg(r){ var v = S.criteria.map(function(c){ return num((r.criteria_scores || {})[c.id]); }).filter(function(x){ return x != null; }); return avg(v); }
+
+  function renderKpis(){
+    var rs = rows(), n = rs.length;
+    var byTeam = S.teams.map(function(t){ return t + ' ' + all.filter(function(r){ return r.team === t; }).length; }).join(' · ');
+    var overall = avg(rs.map(function(r){ return num(r.overall); }).filter(function(x){ return x != null; }));
+    var design = avg(rs.map(critAvg).filter(function(x){ return x != null; }));
+    var np = rs.map(function(r){ return num(r.nps); }).filter(function(x){ return x != null; });
+    var pro = np.filter(function(x){ return x >= 9; }).length, det = np.filter(function(x){ return x <= 6; }).length;
+    var npsScore = np.length ? Math.round((pro - det) / np.length * 100) : null;
+    var better = rs.filter(function(r){ return r.vs_last_year === S.vsLastYear[0] || r.vs_last_year === S.vsLastYear[1]; }).length;
+    var worse = rs.filter(function(r){ return r.vs_last_year === S.vsLastYear[3]; }).length;
+    $('kpis').innerHTML = [
+      ['ผู้ตอบแบบประเมิน', n + ' <small>คน</small>', team === ALL ? byTeam : 'ทั้งหมด ' + all.length + ' คน'],
+      ['ความพึงพอใจโดยรวม', f2(overall) + ' <small>/ 5</small>', overall == null ? '' : col(overall).label.replace(/^[^ ]+ /, '')],
+      ['คะแนนคุณภาพการออกแบบ', f2(design) + ' <small>/ 5</small>', 'เฉลี่ย ' + S.criteria.length + ' ด้าน'],
+      ['NPS (แนะนำให้ใช้ต่อ)', npsScore == null ? '–' : (npsScore > 0 ? '+' : '') + npsScore, np.length ? ('แนะนำ ' + pct(pro, np.length) + '% · ไม่แนะนำ ' + pct(det, np.length) + '%') : ''],
+      ['ดีขึ้นกว่าปี ' + (S.year - 1), n ? pct(better, n) + '<small>%</small>' : '–', n ? ('แย่ลง ' + pct(worse, n) + '%') : '']
+    ].map(function(k){ return '<div class="kpi"><div class="k">' + k[0] + '</div><div class="v">' + k[1] + '</div><div class="s">' + esc(k[2]) + '</div></div>'; }).join('');
+  }
+
+  function renderInsights(){
+    var rs = rows(), n = rs.length, out = [];
+    $('insTeam').textContent = team === ALL ? '(ทุกทีม)' : '(ทีม ' + team + ')';
+    if(!n){ $('insights').innerHTML = '<div class="empty">ทีมนี้ยังไม่มีคำตอบ</div>'; return; }
+    var cr = S.criteria.map(function(c){
+      var v = rs.map(function(r){ return num((r.criteria_scores || {})[c.id]); }).filter(function(x){ return x != null; });
+      return { label:c.label, a:avg(v) };
+    }).filter(function(x){ return x.a != null; }).sort(function(a, b){ return b.a - a.a; });
+    if(cr.length){
+      var k = Math.min(2, Math.floor(cr.length / 2) || 1);
+      out.push('จุดแข็ง: ' + cr.slice(0, k).map(function(x){ return '<b>' + esc(x.label) + '</b> (' + f1(x.a) + ')'; }).join(' และ '));
+      if(cr.length > 1) out.push('ควรปรับปรุงก่อน: ' + cr.slice(-k).reverse().map(function(x){ return '<b>' + esc(x.label) + '</b> (' + f1(x.a) + ')'; }).join(' และ '));
+    }
+    var ch = S.channels.map(function(c){
+      var v = rs.map(function(r){ return num((r.channel_scores || {})[c.id]); }).filter(function(x){ return x != null; });
+      return { label:c.label, a:avg(v), n:v.length };
+    }).filter(function(x){ return x.a != null; }).sort(function(a, b){ return a.a - b.a; });
+    if(ch.length > 1) out.push('ช่องทางที่พึงพอใจต่ำสุด: <b>' + esc(ch[0].label) + '</b> (' + f1(ch[0].a) + ' · n=' + ch[0].n + ') · สูงสุด: <b>' + esc(ch[ch.length - 1].label) + '</b> (' + f1(ch[ch.length - 1].a) + ')');
+    else if(ch.length) out.push('ช่องทาง <b>' + esc(ch[0].label) + '</b> ได้คะแนนเฉลี่ย ' + f1(ch[0].a));
+    var imp = S.improve.map(function(o){ return { o:o, n: rs.filter(function(r){ return (r.improve || []).indexOf(o) > -1; }).length }; })
+      .filter(function(x){ return x.n; }).sort(function(a, b){ return b.n - a.n; }).slice(0, 3);
+    if(imp.length) out.push('สิ่งที่ทีมอยากให้ปรับมากที่สุดในปี ' + S.nextYear + ': ' + imp.map(function(x){ return '<b>' + esc(x.o) + '</b> (' + pct(x.n, n) + '%)'; }).join(', '));
+    var lead = S.leadTimes.map(function(o){ return { o:o, n: rs.filter(function(r){ return r.lead_time === o; }).length }; }).sort(function(a, b){ return b.n - a.n; })[0];
+    if(lead && lead.n) out.push('ส่วนใหญ่ต้องการรับงานล่วงหน้า <b>' + esc(lead.o) + '</b> (' + pct(lead.n, n) + '%)');
+    if(team === ALL){
+      var tv = S.teams.map(function(t){
+        var v = all.filter(function(r){ return r.team === t; }).map(function(r){ return num(r.overall); }).filter(function(x){ return x != null; });
+        return { t:t, a:avg(v) };
+      }).filter(function(x){ return x.a != null; }).sort(function(a, b){ return a.a - b.a; });
+      if(tv.length > 1 && tv[tv.length - 1].a - tv[0].a >= 0.3) out.push('ทีมที่พึงพอใจโดยรวมต่ำสุด: <b>' + esc(tv[0].t) + '</b> (' + f2(tv[0].a) + ' / 5) เทียบกับ ' + esc(tv[tv.length - 1].t) + ' (' + f2(tv[tv.length - 1].a) + ') — ควรคุยรายละเอียดกับทีมนี้เพิ่ม');
+    }
+    if(n < 5) out.push('<span class="muted">หมายเหตุ: ยังมีผู้ตอบเพียง ' + n + ' คน ผลอาจยังไม่สะท้อนภาพรวม</span>');
+    $('insights').innerHTML = '<ul>' + out.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>';
+  }
+
+  function renderComments(){
+    var rs = rows();
+    var defs = [['suggestions', 'ข้อเสนอแนะปี ' + S.nextYear], ['problems', 'ปัญหา / อุปสรรค'], ['best_work', 'ผลงานที่ชอบ']];
+    $('cmTabs').innerHTML = defs.map(function(d){
+      var c = rs.filter(function(r){ return r[d[0]]; }).length;
+      return '<button type="button" data-tab="' + d[0] + '" aria-pressed="' + (tab === d[0]) + '">' + esc(d[1]) + ' (' + c + ')</button>';
+    }).join('');
+    var list = rs.filter(function(r){ return r[tab]; });
+    $('cms').innerHTML = list.length ? list.map(function(r){
+      var d = new Date(r.created_at);
+      return '<div class="cm"><div class="cm-h"><span class="badge b-' + Math.max(0, teamIdx(r.team)) + '">' + esc(r.team) + '</span>' +
+        esc(r.role || '') + ' · ' + d.toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'2-digit' }) + '</div><p>' + esc(r[tab]) + '</p></div>';
+    }).join('') : '<div class="empty">ยังไม่มีความคิดเห็นในหัวข้อนี้</div>';
+  }
+  $('cmTabs').addEventListener('click', function(e){ var b = e.target.closest('button[data-tab]'); if(b){ tab = b.getAttribute('data-tab'); renderComments(); } });
+
+  function renderSeg(){
+    $('teamSeg').innerHTML = [ALL].concat(S.teams).map(function(t){
+      var c = t === ALL ? all.length : all.filter(function(r){ return r.team === t; }).length;
+      return '<button type="button" data-team="' + esc(t) + '" aria-pressed="' + (team === t) + '">' + esc(t) + ' (' + c + ')</button>';
+    }).join('');
+  }
+  $('teamSeg').addEventListener('click', function(e){ var b = e.target.closest('button[data-team]'); if(b){ team = b.getAttribute('data-team'); render(); } });
+
+  function render(){
+    renderSeg();
+    var t = fetchedAt ? fetchedAt.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' }) + ' น.' : '';
+    $('meta').textContent = 'แสดง ' + rows().length + ' คำตอบ · ดึงข้อมูลล่าสุด ' + t;
+    $('printMeta').textContent = 'ทีม: ' + team + ' · ผู้ตอบ ' + rows().length + ' คน · ข้อมูล ณ ' + (fetchedAt ? fetchedAt.toLocaleString('th-TH') : '');
+    $('emptyAll').hidden = all.length > 0; $('content').hidden = all.length === 0;
+    if(!all.length) return;
+    renderKpis(); renderInsights();
+    heat('heatCrit', S.criteria, function(r, id){ return num((r.criteria_scores || {})[id]); });
+    heat('heatCh', S.channels, function(r, id){ return num((r.channel_scores || {})[id]); });
+    var rs = rows();
+    bars('bImprove', S.improve, rs, function(r){ return r.improve || []; }, true);
+    bars('bFormats', S.formats, rs, function(r){ return r.formats || []; }, true);
+    bars('bVs', S.vsLastYear, rs, function(r){ return [r.vs_last_year]; }, false);
+    bars('bLead', S.leadTimes, rs, function(r){ return [r.lead_time]; }, false);
+    bars('bCh', S.channels.map(function(c){ return c.label; }), rs, function(r){ return (r.channels || []).map(chLabel); }, true);
+    bars('bFreq', S.freqs, rs, function(r){ return [r.usage_freq]; }, false);
+    renderComments();
+  }
+
+  // ---------- tools ----------
+  function formUrl(){ return location.origin + '/'; }
+  function copyLink(btn){
+    var url = formUrl(), old = btn.textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function(){ btn.textContent = '✓ คัดลอกแล้ว'; })
+      .catch(function(){ window.prompt('คัดลอกลิงก์นี้ส่งให้ทีม', url); })
+      .then(function(){ setTimeout(function(){ btn.textContent = old; }, 1600); });
+  }
+  $('copyLink').addEventListener('click', function(){ copyLink(this); });
+  $('copyLink2').addEventListener('click', function(){ copyLink(this); });
+  $('refresh').addEventListener('click', function(){
+    var code = ss.get(CODEKEY), btn = this; if(!code) return;
+    btn.disabled = true;
+    load(code).then(function(d){ all = d; fetchedAt = new Date(); render(); })
+      .catch(function(ex){ alert('รีเฟรชไม่สำเร็จ: ' + ex.message); })
+      .then(function(){ btn.disabled = false; });
+  });
+  $('logout').addEventListener('click', function(){ ss.del(CODEKEY); location.reload(); });
+  $('print').addEventListener('click', function(){ window.print(); });
+  $('csv').addEventListener('click', function(){
+    var rs = rows();
+    function c(v){ v = v == null ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+    var head = ['วันที่', 'ทีม', 'ตำแหน่ง', 'ความถี่การใช้งาน', 'ช่องทางที่ใช้']
+      .concat(S.channels.map(function(x){ return 'ช่องทาง: ' + x.label; }))
+      .concat(S.criteria.map(function(x){ return 'ด้าน: ' + x.label; }))
+      .concat(['ความพึงพอใจโดยรวม', 'NPS (0-10)', 'เทียบปี ' + (S.year - 1), 'สิ่งที่อยากให้ปรับปรุง', 'รูปแบบที่อยากได้เพิ่ม', 'ต้องการรับงานล่วงหน้า', 'ผลงานที่ชอบ', 'ปัญหา/อุปสรรค', 'ข้อเสนอแนะ']);
+    var lines = [head.map(c).join(',')];
+    rs.forEach(function(r){
+      lines.push([new Date(r.created_at).toLocaleString('th-TH'), r.team, r.role, r.usage_freq, (r.channels || []).map(chLabel).join(' | ')]
+        .concat(S.channels.map(function(x){ return (r.channel_scores || {})[x.id]; }))
+        .concat(S.criteria.map(function(x){ return (r.criteria_scores || {})[x.id]; }))
+        .concat([r.overall, r.nps, r.vs_last_year, (r.improve || []).join(' | '), (r.formats || []).join(' | '), r.lead_time, r.best_work, r.problems, r.suggestions])
+        .map(c).join(','));
+    });
+    var blob = new Blob(['﻿' + lines.join('\r\n')], { type:'text/csv;charset=utf-8;' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'artwork-survey-' + S.year + '_' + (team === ALL ? 'all' : team) + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  // ---------- auto-login from this tab's session ----------
+  var saved = ss.get(CODEKEY);
+  if(saved){ load(saved).then(function(d){ enter(saved, d); }).catch(function(){ ss.del(CODEKEY); }); }
+})();
+</script>
+</body>
+</html>

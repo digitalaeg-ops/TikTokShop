@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบประเมิน Artwork Promotion ปี 2569 | SANWA</title>
+<meta name="description" content="แบบประเมินผลการออกแบบ Artwork Promotion ปี 2569 สำหรับทีมค้าส่ง Retail และ MarketPlace — ใช้ปรับปรุงงานออกแบบปี 2570">
+<meta property="og:title" content="แบบประเมิน Artwork Promotion ปี 2569 — SANWA">
+<meta property="og:description" content="ใช้เวลาประมาณ 5 นาที · ไม่ระบุตัวตน · ผลนำไปปรับปรุง Artwork ปี 2570">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .hero h1{font-size:clamp(1.35rem,3.6vw,1.75rem); line-height:1.3; margin:0 0 8px}
+  .hero .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .hero .tags span{font-size:.8rem; background:var(--accent-soft); color:var(--accent-deep); padding:4px 10px; border-radius:999px; font-weight:500}
+
+  .prog{display:flex; gap:6px; margin:4px 0 6px}
+  .prog i{flex:1; height:6px; border-radius:4px; background:var(--line)}
+  .prog i.on{background:var(--accent)}
+  .progtxt{display:flex; justify-content:space-between; font-size:.82rem; color:var(--muted); margin-bottom:14px}
+  .progtxt b{color:var(--ink); font-weight:600}
+
+  .q{margin:0 0 24px}
+  .q:last-child{margin-bottom:4px}
+  .q-label{font-weight:600; display:block; margin-bottom:8px}
+  .q-label .req{color:var(--coral)}
+  .q-hint{font-size:.82rem; color:var(--muted); margin:-4px 0 10px}
+  .errmsg{display:none; color:var(--coral); font-size:.82rem; margin-top:6px}
+  .q.err .q-label{color:var(--coral)}
+  .q.err .errmsg{display:block}
+
+  .pills{display:flex; flex-wrap:wrap; gap:8px}
+  .pill{position:relative}
+  .pill input{position:absolute; inset:0; opacity:0; margin:0; cursor:pointer}
+  .pill span{display:inline-block; padding:9px 16px; border:1.5px solid var(--line-strong); border-radius:999px;
+    background:var(--surface-2); font-size:.92rem; cursor:pointer; transition:.12s; user-select:none}
+  .pill:hover span{border-color:var(--accent-hover)}
+  .pill input:checked + span{background:var(--accent); border-color:var(--accent); color:#fff}
+  .pill input:focus-visible + span{outline:2px solid var(--accent); outline-offset:2px}
+  .pill input:disabled + span{opacity:.4; cursor:not-allowed}
+  .team-pills .pill span{padding:14px 22px; border-radius:12px; font-weight:600; font-size:1rem; min-width:150px; text-align:center}
+  .limit{font-size:.8rem; color:var(--accent-deep); margin-top:8px; min-height:1.2em}
+
+  .rating{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; max-width:540px}
+  .rating label, .nps label{position:relative}
+  .rating input, .nps input{position:absolute; inset:0; opacity:0; margin:0; cursor:pointer}
+  .rating span{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; min-height:58px;
+    padding:6px 4px; border:1.5px solid var(--line-strong); border-radius:10px; background:var(--surface-2); cursor:pointer; transition:.12s}
+  .rating b{font-size:1.1rem; line-height:1.1}
+  .rating small{font-size:.68rem; color:var(--muted); line-height:1.2; text-align:center}
+  .rating label:hover span, .nps label:hover span{border-color:var(--accent-hover)}
+  .rating input:checked + span{background:var(--accent); border-color:var(--accent); color:#fff}
+  .rating input:checked + span small{color:#DDEFF1}
+  .rating input:focus-visible + span, .nps input:focus-visible + span{outline:2px solid var(--accent); outline-offset:2px}
+  .rate-cap{font-size:.82rem; color:var(--accent-deep); margin-top:6px; min-height:1.25em}
+
+  .nps{display:grid; grid-template-columns:repeat(11,1fr); gap:4px; max-width:640px}
+  .nps span{display:flex; align-items:center; justify-content:center; min-height:44px; border:1.5px solid var(--line-strong);
+    border-radius:8px; background:var(--surface-2); font-weight:600; cursor:pointer; transition:.12s}
+  .nps input:checked + span{background:var(--accent); border-color:var(--accent); color:#fff}
+  .nps-ends{display:flex; justify-content:space-between; max-width:640px; font-size:.76rem; color:var(--muted); margin-top:5px}
+
+  .rows .q{display:grid; grid-template-columns:minmax(180px,1fr) minmax(250px,1.35fr); gap:6px 18px; align-items:center;
+    padding:14px 0; margin:0; border-top:1px solid var(--line)}
+  .rows .q:first-child{border-top:none; padding-top:4px}
+  .rows .q .q-label{margin:0}
+  .rows .q .errmsg{grid-column:1 / -1; margin-top:0}
+  .rows .q .rate-cap{grid-column:2; margin-top:0}
+  .rows-empty{padding:14px; border:1.5px dashed var(--line-strong); border-radius:10px; color:var(--muted); font-size:.88rem; text-align:center}
+  @media (max-width:620px){
+    .rows .q{grid-template-columns:1fr}
+    .rows .q .rate-cap{grid-column:1}
+    .rating small{display:none}
+    .rating span{min-height:46px}
+    .team-pills .pill{flex:1 1 100%}
+    .team-pills .pill span{width:100%}
+  }
+
+  textarea{width:100%; min-height:92px; border:1.5px solid var(--line-strong); border-radius:10px; padding:10px 12px;
+    background:var(--surface-2); resize:vertical; line-height:1.55}
+  textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .count{font-size:.74rem; color:var(--muted); text-align:right; margin-top:2px}
+
+  .nav{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:6px}
+  .nav .grow{flex:1}
+  .submit-err{color:var(--coral); font-size:.86rem; margin-top:10px}
+  .saved{font-size:.76rem; color:var(--muted)}
+
+  .done{text-align:center; padding:clamp(28px,6vw,48px) clamp(16px,4vw,32px)}
+  .done .ok{width:64px; height:64px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center;
+    margin:0 auto 14px; font-size:2rem; font-weight:700}
+  .done h2{font-size:1.4rem; margin:0 0 8px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <img src="logosanwa.png" alt="SANWA อุปกรณ์ประปาคุณภาพสูง">
+  <span class="div"></span>
+  <span class="ttl">Artwork Promotion <span>· ประเมินผลปี 2569</span></span>
+</header>
+
+<main class="wrap">
+  <section class="card hero" id="intro">
+    <h1>แบบประเมินผลการออกแบบ Artwork Promotion ปี 2569</h1>
+    <p class="muted" style="margin:0">ช่วยบอกเราว่า Artwork โปรโมชั่นตลอด 12 เดือนที่ผ่านมา ตอบโจทย์ทีมและลูกค้าในแต่ละช่องทางแค่ไหน
+      ทุกคำตอบจะนำไปปรับปรุงการออกแบบ <b style="color:var(--ink)">ปี 2570</b> และสรุปนำเสนอผู้บริหาร</p>
+    <div class="tags"><span>⏱ ประมาณ 5 นาที</span><span>🔒 ไม่ระบุตัวตน</span><span>💾 บันทึกร่างอัตโนมัติ</span></div>
+  </section>
+
+  <section class="card" id="already" hidden>
+    <h2>คุณส่งแบบประเมินจากเครื่องนี้แล้ว ขอบคุณครับ 🙏</h2>
+    <p class="muted">ถ้าใช้เครื่องร่วมกับเพื่อนร่วมทีม และอีกคนยังไม่ได้ตอบ กดปุ่มด้านล่างเพื่อเริ่มแบบประเมินใหม่</p>
+    <button class="btn primary" type="button" id="againBtn">เริ่มตอบแบบประเมินใหม่</button>
+  </section>
+
+  <div id="formArea">
+    <div class="prog" id="prog"></div>
+    <div class="progtxt"><span>ขั้นที่ <b id="stepNo">1</b> / 5 · <span id="stepName"></span></span><span class="saved" id="saved"></span></div>
+
+    <form id="f" novalidate autocomplete="off">
+      <section class="card step" data-step="1" data-name="เกี่ยวกับคุณ"><div id="s1"></div></section>
+      <section class="card step" data-step="2" data-name="ช่องทางที่ใช้" hidden>
+        <div id="s2a"></div>
+        <h3 style="margin-top:6px">ให้คะแนนความพึงพอใจ Artwork ในแต่ละช่องทาง <span style="color:var(--coral)">*</span></h3>
+        <p class="q-hint" style="margin:-6px 0 6px">1 = ต้องปรับปรุงมาก · 5 = ดีมาก</p>
+        <div class="rows" id="chScores"></div>
+      </section>
+      <section class="card step" data-step="3" data-name="คุณภาพการออกแบบ" hidden>
+        <h3>ให้คะแนน Artwork ปี 2569 ในแต่ละด้าน <span style="color:var(--coral)">*</span></h3>
+        <p class="q-hint" style="margin:-6px 0 6px">1 = ต้องปรับปรุงมาก · 5 = ดีมาก</p>
+        <div class="rows" id="s3"></div>
+      </section>
+      <section class="card step" data-step="4" data-name="ภาพรวม" hidden><div id="s4"></div></section>
+      <section class="card step" data-step="5" data-name="แนวทางปี 2570" hidden><div id="s5"></div></section>
+
+      <div class="nav">
+        <button class="btn" type="button" id="backBtn">← ย้อนกลับ</button>
+        <span class="grow"></span>
+        <button class="btn primary" type="button" id="nextBtn">ถัดไป →</button>
+        <button class="btn primary" type="submit" id="submitBtn" hidden>ส่งแบบประเมิน ✓</button>
+      </div>
+      <div class="submit-err" id="submitErr" hidden></div>
+    </form>
+  </div>
+
+  <section class="card done" id="done" hidden>
+    <div class="ok">✓</div>
+    <h2>ส่งแบบประเมินเรียบร้อย ขอบคุณครับ</h2>
+    <p class="muted">ความคิดเห็นของคุณจะถูกนำไปปรับปรุง Artwork Promotion ปี 2570 ให้ตอบโจทย์ทีมและลูกค้ามากขึ้น</p>
+  </section>
+</main>
+<div class="footer">SANWA Marketing Online · แบบประเมิน Artwork Promotion ปี 2569</div>
+
+<script src="survey-config.js"></script>
+<script>
+(function(){
+  var S = window.SURVEY, N = 5;
+  var DRAFT = 'artworkSurvey' + S.year + 'Draft', SENT = 'artworkSurvey' + S.year + 'Sent';
+  var store = {
+    get: function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+    set: function(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
+    del: function(k){ try{ localStorage.removeItem(k); }catch(e){} }
+  };
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var form = $('f'), step = 1, restoring = false;
+
+  // ---------- builders ----------
+  function q(name, label, inner, o){
+    o = o || {};
+    return '<div class="q" data-q="' + name + '"' + (o.req ? ' data-req="1"' : '') + (o.multi ? ' data-multi="1"' : '') + '>' +
+      '<span class="q-label">' + esc(label) + (o.req ? ' <span class="req">*</span>' : '') + '</span>' +
+      (o.hint ? '<div class="q-hint">' + esc(o.hint) + '</div>' : '') + inner +
+      '<div class="errmsg">' + esc(o.err || 'กรุณาตอบข้อนี้') + '</div></div>';
+  }
+  function pills(name, opts, type, cls){
+    return '<div class="pills ' + (cls || '') + '">' + opts.map(function(o){
+      var v = typeof o === 'string' ? o : o.id, l = typeof o === 'string' ? o : o.label;
+      return '<label class="pill"><input type="' + (type || 'radio') + '" name="' + name + '" value="' + esc(v) + '"><span>' + esc(l) + '</span></label>';
+    }).join('') + '</div>';
+  }
+  function rating(name){
+    return '<div class="rating">' + S.scale.map(function(l, i){
+      return '<label title="' + esc(l) + '"><input type="radio" name="' + name + '" value="' + (i+1) + '"><span><b>' + (i+1) + '</b><small>' + esc(l) + '</small></span></label>';
+    }).join('') + '</div><div class="rate-cap" data-cap="' + name + '"></div>';
+  }
+  function nps(name){
+    var h = '<div class="nps">';
+    for(var i = 0; i <= 10; i++) h += '<label><input type="radio" name="' + name + '" value="' + i + '"><span>' + i + '</span></label>';
+    return h + '</div><div class="nps-ends"><span>0 = ไม่แนะนำเลย</span><span>10 = แนะนำแน่นอน</span></div>';
+  }
+  function area(name, ph){
+    return '<textarea name="' + name + '" maxlength="2000" placeholder="' + esc(ph) + '"></textarea><div class="count" data-count="' + name + '">0 / 2000</div>';
+  }
+
+  // ---------- render steps ----------
+  $('s1').innerHTML =
+    q('team', 'คุณอยู่ทีมไหน', pills('team', S.teams, 'radio', 'team-pills'), {req:1}) +
+    q('role', 'ตำแหน่ง / บทบาทของคุณ', pills('role', S.roles), {req:1}) +
+    q('usage_freq', 'คุณใช้งาน Artwork Promotion บ่อยแค่ไหน', pills('usage_freq', S.freqs), {req:1});
+
+  $('s2a').innerHTML =
+    q('channels', 'ปี ' + S.year + ' คุณใช้ Artwork Promotion ในช่องทางไหนบ้าง', pills('channels', S.channels, 'checkbox'),
+      {req:1, multi:1, hint:'เลือกได้หลายข้อ', err:'กรุณาเลือกอย่างน้อย 1 ช่องทาง'});
+
+  $('s3').innerHTML = S.criteria.map(function(c){ return q('cr_' + c.id, c.label, rating('cr_' + c.id), {req:1}); }).join('');
+
+  $('s4').innerHTML =
+    q('overall', 'ความพึงพอใจโดยรวมต่อ Artwork Promotion ปี ' + S.year, rating('overall'), {req:1}) +
+    q('nps', 'คุณจะแนะนำให้ใช้แนวทางการออกแบบแบบปี ' + S.year + ' ต่อไป มากน้อยแค่ไหน', nps('nps'), {req:1}) +
+    q('vs_last_year', 'เมื่อเทียบกับปี ' + (S.year - 1) + ' Artwork ปีนี้เป็นอย่างไร', pills('vs_last_year', S.vsLastYear), {req:1});
+
+  $('s5').innerHTML =
+    q('improve', 'ปี ' + S.nextYear + ' อยากให้ปรับปรุงเรื่องใดมากที่สุด', pills('improve', S.improve, 'checkbox') + '<div class="limit" id="improveLimit"></div>',
+      {req:1, multi:1, hint:'เลือกได้สูงสุด ' + S.improveMax + ' ข้อ', err:'กรุณาเลือกอย่างน้อย 1 ข้อ'}) +
+    q('formats', 'รูปแบบงานที่อยากได้เพิ่มในปี ' + S.nextYear, pills('formats', S.formats, 'checkbox'), {hint:'เลือกได้หลายข้อ (ไม่บังคับ)'}) +
+    q('lead_time', 'อยากได้รับ Artwork ล่วงหน้าก่อนเริ่มโปรโมชั่นนานแค่ไหน', pills('lead_time', S.leadTimes), {req:1}) +
+    q('best_work', 'ผลงาน Artwork ปี ' + S.year + ' ที่ชอบที่สุด และเพราะอะไร', area('best_work', 'เช่น โปรฯ เดือนไหน / ชิ้นไหน ทำไมได้ผลดี'), {hint:'ไม่บังคับ'}) +
+    q('problems', 'ปัญหา / อุปสรรคที่พบในการใช้งาน Artwork', area('problems', 'เช่น ได้งานช้า ขนาดไม่พอดีช่องทาง ข้อความเยอะเกินไป'), {hint:'ไม่บังคับ'}) +
+    q('suggestions', 'ข้อเสนอแนะสำหรับการออกแบบปี ' + S.nextYear, area('suggestions', 'อยากให้ปีหน้าเป็นแบบไหน'), {hint:'ไม่บังคับ แต่มีประโยชน์มาก'});
+
+  var prog = $('prog');
+  for(var i = 0; i < N; i++) prog.appendChild(document.createElement('i'));
+
+  // ---------- helpers ----------
+  function val(name){ var el = form.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : null; }
+  function vals(name){ return Array.prototype.map.call(form.querySelectorAll('input[name="' + name + '"]:checked'), function(e){ return e.value; }); }
+  function chLabel(id){ for(var i = 0; i < S.channels.length; i++) if(S.channels[i].id === id) return S.channels[i].label; return id; }
+
+  function renderChannels(keep){
+    var sel = vals('channels'), old = keep || {};
+    S.channels.forEach(function(c){ var v = val('ch_' + c.id); if(v) old['ch_' + c.id] = v; });
+    var box = $('chScores');
+    if(!sel.length){ box.innerHTML = '<div class="rows-empty">เลือกช่องทางด้านบนก่อน แล้วจะมีช่องให้คะแนนขึ้นมาที่นี่</div>'; return; }
+    box.innerHTML = S.channels.filter(function(c){ return sel.indexOf(c.id) > -1; })
+      .map(function(c){ return q('ch_' + c.id, c.label, rating('ch_' + c.id), {req:1}); }).join('');
+    Object.keys(old).forEach(function(n){
+      var el = form.querySelector('input[name="' + n + '"][value="' + old[n] + '"]');
+      if(el){ el.checked = true; updateCap(n); }
+    });
+  }
+  function updateCap(name){
+    var cap = form.querySelector('[data-cap="' + name + '"]'); if(!cap) return;
+    var v = val(name); cap.textContent = v ? (v + ' – ' + S.scale[v - 1]) : '';
+  }
+  function updateImproveLimit(){
+    var n = vals('improve').length, max = S.improveMax;
+    Array.prototype.forEach.call(form.querySelectorAll('input[name="improve"]'), function(e){ e.disabled = !e.checked && n >= max; });
+    $('improveLimit').textContent = n ? ('เลือกแล้ว ' + n + ' / ' + max + (n >= max ? ' — ถ้าจะเปลี่ยน ให้กดยกเลิกข้อเดิมก่อน' : '')) : '';
+  }
+  function updateCount(name){
+    var t = form.querySelector('textarea[name="' + name + '"]'), c = form.querySelector('[data-count="' + name + '"]');
+    if(t && c) c.textContent = t.value.length + ' / 2000';
+  }
+
+  // ---------- draft ----------
+  function snapshot(){
+    var o = { _step: step };
+    Array.prototype.forEach.call(form.querySelectorAll('input:checked'), function(e){
+      if(e.type === 'checkbox'){ (o[e.name] = o[e.name] || []).push(e.value); } else { o[e.name] = e.value; }
+    });
+    Array.prototype.forEach.call(form.querySelectorAll('textarea'), function(t){ if(t.value) o[t.name] = t.value; });
+    return o;
+  }
+  var saveT;
+  function saveDraft(){
+    if(restoring) return;
+    clearTimeout(saveT);
+    saveT = setTimeout(function(){
+      store.set(DRAFT, JSON.stringify(snapshot()));
+      $('saved').textContent = 'บันทึกร่างแล้ว ✓';
+    }, 300);
+  }
+  function restoreDraft(){
+    var raw = store.get(DRAFT); if(!raw) return false;
+    var o; try{ o = JSON.parse(raw); }catch(e){ return false; }
+    restoring = true;
+    Object.keys(o).forEach(function(n){
+      if(n === '_step' || n.indexOf('ch_') === 0) return;
+      var v = o[n];
+      if(Array.isArray(v)) v.forEach(function(x){ var el = form.querySelector('input[name="' + n + '"][value="' + CSS.escape(x) + '"]'); if(el) el.checked = true; });
+      else {
+        var t = form.querySelector('textarea[name="' + n + '"]');
+        if(t){ t.value = v; updateCount(n); }
+        else { var el = form.querySelector('input[name="' + n + '"][value="' + CSS.escape(v) + '"]'); if(el){ el.checked = true; updateCap(n); } }
+      }
+    });
+    var chKeep = {}; Object.keys(o).forEach(function(n){ if(n.indexOf('ch_') === 0) chKeep[n] = o[n]; });
+    renderChannels(chKeep);
+    updateImproveLimit();
+    restoring = false;
+    var st = parseInt(o._step, 10);
+    if(st >= 1 && st <= N) step = st;
+    $('saved').textContent = 'กู้คืนคำตอบที่ตอบค้างไว้แล้ว';
+    return true;
+  }
+
+  // ---------- validation & navigation ----------
+  function validate(n){
+    var sec = form.querySelector('.step[data-step="' + n + '"]'), first = null;
+    Array.prototype.forEach.call(sec.querySelectorAll('.q[data-req]'), function(qe){
+      var name = qe.getAttribute('data-q');
+      var ok = qe.hasAttribute('data-multi') ? vals(name).length > 0 : !!val(name);
+      qe.classList.toggle('err', !ok);
+      if(!ok && !first) first = qe;
+    });
+    if(n === 2 && !vals('channels').length) first = first || sec.querySelector('[data-q="channels"]');
+    if(first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+    return !first;
+  }
+  function show(n){
+    step = n;
+    Array.prototype.forEach.call(form.querySelectorAll('.step'), function(s){ s.hidden = +s.getAttribute('data-step') !== n; });
+    Array.prototype.forEach.call(prog.children, function(b, i){ b.classList.toggle('on', i < n); });
+    $('stepNo').textContent = n;
+    $('stepName').textContent = form.querySelector('.step[data-step="' + n + '"]').getAttribute('data-name');
+    $('intro').hidden = n !== 1;
+    $('backBtn').style.visibility = n === 1 ? 'hidden' : 'visible';
+    $('nextBtn').hidden = n === N;
+    $('submitBtn').hidden = n !== N;
+    $('submitErr').hidden = true;
+  }
+  function go(n){ show(n); saveDraft(); window.scrollTo({ top:0, behavior:'smooth' }); }
+
+  $('nextBtn').addEventListener('click', function(){ if(validate(step)) go(step + 1); });
+  $('backBtn').addEventListener('click', function(){ if(step > 1) go(step - 1); });
+
+  form.addEventListener('change', function(e){
+    var t = e.target;
+    if(t.name === 'channels') renderChannels();
+    if(t.name === 'improve') updateImproveLimit();
+    if(t.type === 'radio') updateCap(t.name);
+    var qe = t.closest('.q'); if(qe && qe.classList.contains('err')){
+      var name = qe.getAttribute('data-q');
+      if(qe.hasAttribute('data-multi') ? vals(name).length : val(name)) qe.classList.remove('err');
+    }
+    saveDraft();
+  });
+  form.addEventListener('input', function(e){ if(e.target.tagName === 'TEXTAREA'){ updateCount(e.target.name); saveDraft(); } });
+
+  // ---------- submit ----------
+  function payload(){
+    var chs = vals('channels'), chScores = {}, crScores = {};
+    chs.forEach(function(id){ var v = val('ch_' + id); if(v) chScores[id] = +v; });
+    S.criteria.forEach(function(c){ var v = val('cr_' + c.id); if(v) crScores[c.id] = +v; });
+    function txt(n){ var t = form.querySelector('textarea[name="' + n + '"]'); var v = t ? t.value.trim() : ''; return v || null; }
+    return {
+      survey_year: S.year, team: val('team'), role: val('role'), usage_freq: val('usage_freq'),
+      channels: chs, channel_scores: chScores, criteria_scores: crScores,
+      overall: +val('overall'), nps: +val('nps'), vs_last_year: val('vs_last_year'),
+      improve: vals('improve'), formats: vals('formats'), lead_time: val('lead_time'),
+      best_work: txt('best_work'), problems: txt('problems'), suggestions: txt('suggestions')
+    };
+  }
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    for(var n = 1; n <= N; n++){ if(!validate(n)){ show(n); validate(n); return; } }
+    var btn = $('submitBtn'), err = $('submitErr');
+    btn.disabled = true; btn.textContent = 'กำลังส่ง...'; err.hidden = true;
+    fetch(S.supabaseUrl + '/rest/v1/' + S.table, {
+      method: 'POST',
+      headers: { 'apikey': S.anonKey, 'Authorization': 'Bearer ' + S.anonKey, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify(payload())
+    }).then(function(r){
+      if(!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ' ' + t.slice(0, 160)); });
+      store.del(DRAFT); store.set(SENT, new Date().toISOString());
+      $('formArea').hidden = true; $('intro').hidden = true; $('done').hidden = false;
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }).catch(function(ex){
+      err.textContent = 'ส่งไม่สำเร็จ กรุณาลองใหม่อีกครั้ง (คำตอบยังบันทึกอยู่ในเครื่อง) — ' + ex.message;
+      err.hidden = false;
+    }).then(function(){ btn.disabled = false; btn.textContent = 'ส่งแบบประเมิน ✓'; });
+  });
+
+  // ---------- start ----------
+  $('againBtn').addEventListener('click', function(){
+    store.del(SENT); $('already').hidden = true; $('formArea').hidden = false; show(1);
+  });
+  renderChannels();
+  var hadDraft = restoreDraft();
+  if(store.get(SENT) && !hadDraft){ $('already').hidden = false; $('formArea').hidden = true; $('intro').hidden = true; }
+  else show(step);
+})();
+</script>
+</body>
+</html>
