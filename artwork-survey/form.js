@@ -11,6 +11,7 @@
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function each(list, fn){ Array.prototype.forEach.call(list, fn); }
   var form = $('f'), restoring = false, steps = [], cur = 0, viewed = {}, galleries = {};
+  var t0 = Date.now();   // เวลาที่เริ่มทำแบบประเมิน (ใช้ตรวจคนตอบเร็วผิดปกติ) — กู้จากร่างถ้ามี
 
   // ---------- builders ----------
   function q(name, label, inner, o){
@@ -156,7 +157,7 @@
 
   // ---------- draft ----------
   function snapshot(){
-    var o = { _step: steps[cur], _viewed: viewed };
+    var o = { _step: steps[cur], _viewed: viewed, _t0: t0 };
     each(form.querySelectorAll('input:checked'), function(e){
       if(e.type === 'checkbox'){ (o[e.name] = o[e.name] || []).push(e.value); } else { o[e.name] = e.value; }
     });
@@ -174,6 +175,7 @@
     var o; try{ o = JSON.parse(raw); }catch(e){ return null; }
     restoring = true;
     viewed = o._viewed || {};
+    if(typeof o._t0 === 'number' && o._t0 <= Date.now()) t0 = o._t0;
     Object.keys(o).forEach(function(n){
       if(n.charAt(0) === '_') return;
       var v = o[n];
@@ -277,7 +279,8 @@
       survey_year: S.year, link: LINK, groups: selGroups(), role: val('role'), usage_freq: val('usage_freq'),
       group_answers: ga, vs_last_year: val('vs_last_year'), nps: +val('nps'),
       improve: vals('improve'), formats: vals('formats'), lead_time: val('lead_time'),
-      problems: txt('problems'), suggestions: txt('suggestions')
+      problems: txt('problems'), suggestions: txt('suggestions'),
+      duration_sec: Math.max(0, Math.min(2592000, Math.round((Date.now() - t0) / 1000)))
     };
   }
   // ---------- ปิดรับคำตอบ ----------
@@ -320,7 +323,7 @@
 
   // ---------- start ----------
   $('againBtn').addEventListener('click', function(){
-    store.del(SENT); $('already').hidden = true; $('formArea').hidden = false; $('intro').hidden = false; show(0);
+    store.del(SENT); t0 = Date.now(); $('already').hidden = true; $('formArea').hidden = false; $('intro').hidden = false; show(0);
   });
   var savedStep = restoreDraft();
   computeSteps();

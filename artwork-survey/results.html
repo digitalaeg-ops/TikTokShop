@@ -93,6 +93,15 @@
   .cm p{margin:0; white-space:pre-wrap; word-break:break-word}
   .empty{color:var(--muted); font-size:.88rem; padding:18px; text-align:center; border:1.5px dashed var(--line-strong); border-radius:10px}
 
+  .fastchk{display:inline-flex; align-items:center; gap:6px; font-size:.84rem; background:var(--coral-soft); color:#8E2A26; padding:6px 12px; border-radius:10px; cursor:pointer}
+  .fastchk input{accent-color:var(--coral); width:16px; height:16px}
+  table.resp{width:100%; border-collapse:collapse; font-size:.84rem}
+  table.resp th{text-align:left; font-size:.76rem; color:var(--muted); font-weight:600; padding:6px 8px; border-bottom:1.5px solid var(--line-strong); white-space:nowrap}
+  table.resp td{padding:8px; border-bottom:1px solid var(--line); vertical-align:middle}
+  table.resp td .gchip{margin:1px 3px 1px 0; display:inline-block}
+  table.resp tr.fast td{background:#FFF4F2}
+  .flag{display:inline-block; font-size:.72rem; font-weight:700; color:#fff; background:var(--coral); padding:1px 7px; border-radius:999px; white-space:nowrap}
+  .btn.del:hover{border-color:var(--coral); color:var(--coral)}
   .print-head{display:none}
   @media print{
     body{background:#fff}
@@ -138,6 +147,7 @@
 
     <div class="bar-top">
       <div class="seg" id="seg" role="group" aria-label="กรองตามกลุ่ม"></div>
+      <label class="fastchk no-print" id="fastWrap" hidden><input type="checkbox" id="hideFast"> ไม่นับคำตอบที่ตอบเร็วผิดปกติ <span id="fastCnt"></span></label>
       <span class="meta" id="meta"></span>
     </div>
 
@@ -184,6 +194,12 @@
         <div class="cms" id="cms"></div>
       </section>
     </div>
+
+    <section class="card sec" id="listSec" hidden>
+      <h3>รายการคำตอบทั้งหมด</h3>
+      <p class="sub" id="listSub"></p>
+      <div class="tblwrap"><table class="resp" id="respTbl"></table></div>
+    </section>
   </div>
 </main>
 <div class="footer">SANWA Marketing Online · ข้อมูลจากแบบประเมิน Artwork Promotion ปี 2569</div>
@@ -210,7 +226,11 @@
   function ga(r, g){ return (r.group_answers || {})[g] || null; }
   function dshort(d){ return new Date(d).toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'2-digit' }); }
 
-  var all = [], grp = ALL, tab = 'suggestions', fetchedAt = null;
+  // raw = คำตอบทั้งหมดจากฐานข้อมูล · all = ที่ใช้คำนวณ (ตัดคำตอบเร็วผิดปกติออกถ้าติ๊กไว้)
+  var raw = [], all = [], grp = ALL, tab = 'suggestions', fetchedAt = null, hideFast = false;
+  function isFast(r){ return r.duration_sec != null && r.duration_sec < S.fastFlagSec; }
+  function setData(d){ raw = d; all = hideFast ? raw.filter(function(r){ return !isFast(r); }) : raw; }
+  function dur(s){ if(s == null) return '–'; var m = Math.floor(s / 60), x = s % 60; return m >= 60 ? Math.floor(m / 60) + ' ชม. ' + (m % 60) + ' นาที' : m + ':' + (x < 10 ? '0' : '') + x + ' นาที'; }
   function rows(){ return grp === ALL ? all : all.filter(function(r){ return (r.groups || []).indexOf(grp) > -1; }); }
   function answersOf(g){ return all.map(function(r){ return ga(r, g); }).filter(Boolean); }
   function withRow(g){ return all.filter(function(r){ return ga(r, g); }).map(function(r){ return { r:r, a:ga(r, g) }; }); }
@@ -229,7 +249,7 @@
     });
   }
   function enter(code, data){
-    ss.set(CODEKEY, code); all = data; fetchedAt = new Date();
+    ss.set(CODEKEY, code); setData(data); fetchedAt = new Date();
     $('gate').hidden = true; $('dash').hidden = false; $('tools').hidden = false;
     render();
   }
@@ -442,7 +462,8 @@
     var t = fetchedAt ? fetchedAt.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' }) + ' น.' : '';
     $('meta').textContent = 'แสดง ' + rows().length + ' คน · ดึงข้อมูลล่าสุด ' + t;
     $('printMeta').textContent = 'กลุ่ม: ' + (grp === ALL ? 'ทั้งหมด' : gl(grp)) + ' · ผู้ตอบ ' + rows().length + ' คน · ข้อมูล ณ ' + (fetchedAt ? fetchedAt.toLocaleString('th-TH') : '');
-    $('emptyAll').hidden = all.length > 0; $('content').hidden = all.length === 0;
+    $('emptyAll').hidden = raw.length > 0; $('content').hidden = all.length === 0;
+    renderFastBar(); renderList();
     if(!all.length) return;
     renderKpis(); renderInsights(); renderHeat(); renderGroupCards();
     var rs = rows();
@@ -455,6 +476,56 @@
     renderComments();
   }
 
+  // ---------- ตอบเร็วผิดปกติ ----------
+  function renderFastBar(){
+    var nf = raw.filter(isFast).length;
+    $('fastWrap').hidden = !nf;
+    $('fastCnt').textContent = '(' + nf + ' คำตอบ · ใช้เวลาน้อยกว่า ' + Math.round(S.fastFlagSec / 60) + ' นาที)';
+    $('hideFast').checked = hideFast;
+  }
+  $('hideFast').addEventListener('change', function(){ hideFast = this.checked; setData(raw); render(); });
+
+  // ---------- รายการคำตอบ + ลบ ----------
+  function viewedTxt(r){
+    return (r.groups || []).map(function(g){
+      var a = ga(r, g), t = AWG.months(g).length, v = a && a.viewed_months != null ? a.viewed_months : null;
+      return esc(gl(g)) + ' ' + (v == null ? '–' : v + '/' + t);
+    }).join('<br>');
+  }
+  function renderList(){
+    var list = grp === ALL ? raw : raw.filter(function(r){ return (r.groups || []).indexOf(grp) > -1; });
+    $('listSec').hidden = !raw.length;
+    if(!raw.length) return;
+    var nf = list.filter(isFast).length;
+    $('listSub').textContent = list.length + ' คำตอบ' + (grp === ALL ? '' : ' (กลุ่ม ' + gl(grp) + ')') +
+      (nf ? ' · ⚠ ตอบเร็วผิดปกติ ' + nf + ' คำตอบ' : '') + ' · ลบแล้วกู้คืนไม่ได้';
+    $('respTbl').innerHTML = '<thead><tr><th>วันที่ส่ง</th><th>ลิงก์</th><th>กลุ่ม</th><th>ตำแหน่ง</th><th>เวลาที่ใช้</th><th>เดือนที่ดู Artwork</th><th>NPS</th><th class="no-print"></th></tr></thead><tbody>' +
+      list.map(function(r){
+        var f = isFast(r);
+        return '<tr class="' + (f ? 'fast' : '') + '"><td>' + new Date(r.created_at).toLocaleString('th-TH', { day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit' }) + '</td>' +
+          '<td>' + (r.link === 'wholesale' ? 'ลิงก์ 1' : 'ลิงก์ 2') + '</td><td>' + groupBadges(r) + '</td><td>' + esc(r.role) + '</td>' +
+          '<td>' + dur(r.duration_sec) + (f ? ' <span class="flag" title="ใช้เวลาน้อยกว่า ' + Math.round(S.fastFlagSec / 60) + ' นาที อาจไม่ได้ดู Artwork จริง">⚠ ตอบเร็ว</span>' : '') + '</td>' +
+          '<td class="small">' + viewedTxt(r) + '</td><td>' + esc(r.nps) + '</td>' +
+          '<td class="no-print"><button class="btn sm del" type="button" data-del="' + esc(r.id) + '">🗑 ลบ</button></td></tr>';
+      }).join('') + '</tbody>';
+  }
+  $('respTbl').addEventListener('click', function(e){
+    var b = e.target.closest('[data-del]'); if(!b) return;
+    var id = b.getAttribute('data-del'), r = raw.filter(function(x){ return x.id === id; })[0]; if(!r) return;
+    var desc = (r.link === 'wholesale' ? 'ลิงก์ 1' : 'ลิงก์ 2') + ' · ' + (r.groups || []).map(gl).join(', ') + ' · ' + r.role + ' · ส่งเมื่อ ' + new Date(r.created_at).toLocaleString('th-TH');
+    if(!window.confirm('ลบคำตอบนี้ถาวร?\n\n' + desc + '\n\nลบแล้วกู้คืนไม่ได้')) return;
+    var code = ss.get(CODEKEY); b.disabled = true; b.textContent = 'กำลังลบ...';
+    fetch(S.supabaseUrl + '/rest/v1/rpc/delete_artwork_survey_v2_response', {
+      method: 'POST',
+      headers: { 'apikey': S.anonKey, 'Authorization': 'Bearer ' + S.anonKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_code: code, p_id: id })
+    }).then(function(res){
+      if(!res.ok) return res.text().then(function(t){ throw new Error('HTTP ' + res.status + ' ' + t.slice(0, 120)); });
+      return load(code);
+    }).then(function(d){ setData(d); fetchedAt = new Date(); render(); })
+      .catch(function(ex){ alert('ลบไม่สำเร็จ: ' + ex.message); b.disabled = false; b.textContent = '🗑 ลบ'; });
+  });
+
   // ---------- tools ----------
   function copyLink(btn, link){
     var url = location.origin + S.links[link].path, old = btn.textContent;
@@ -466,7 +537,7 @@
   $('refresh').addEventListener('click', function(){
     var code = ss.get(CODEKEY), btn = this; if(!code) return;
     btn.disabled = true;
-    load(code).then(function(d){ all = d; fetchedAt = new Date(); render(); })
+    load(code).then(function(d){ setData(d); fetchedAt = new Date(); render(); })
       .catch(function(ex){ alert('รีเฟรชไม่สำเร็จ: ' + ex.message); })
       .then(function(){ btn.disabled = false; });
   });
@@ -487,13 +558,13 @@
       });
       getters.forEach(function(fn){ fn.g = fn.g || g; });
     });
-    head = head.concat(['เทียบปี ' + (S.year - 1), 'NPS (0-10)', 'สิ่งที่อยากให้ปรับปรุง', 'รูปแบบที่อยากได้เพิ่ม', 'ต้องการรับงานล่วงหน้า', 'ปัญหา/อุปสรรค', 'ข้อเสนอแนะ']);
+    head = head.concat(['เวลาที่ใช้ (นาที)', 'ตอบเร็วผิดปกติ', 'เทียบปี ' + (S.year - 1), 'NPS (0-10)', 'สิ่งที่อยากให้ปรับปรุง', 'รูปแบบที่อยากได้เพิ่ม', 'ต้องการรับงานล่วงหน้า', 'ปัญหา/อุปสรรค', 'ข้อเสนอแนะ']);
     var lines = [head.map(c).join(',')];
     rs.forEach(function(r){
       var row = [new Date(r.created_at).toLocaleString('th-TH'), S.links[r.link] ? S.links[r.link].label : r.link,
         (r.groups || []).map(gl).join(' | '), r.role, r.usage_freq];
       getters.forEach(function(fn){ var a = ga(r, fn.g); row.push(a ? fn(a) : ''); });
-      row = row.concat([r.vs_last_year, r.nps, (r.improve || []).join(' | '), (r.formats || []).join(' | '), r.lead_time, r.problems, r.suggestions]);
+      row = row.concat([r.duration_sec == null ? '' : (r.duration_sec / 60).toFixed(1), isFast(r) ? 'ใช่' : '', r.vs_last_year, r.nps, (r.improve || []).join(' | '), (r.formats || []).join(' | '), r.lead_time, r.problems, r.suggestions]);
       lines.push(row.map(c).join(','));
     });
     var blob = new Blob(['﻿' + lines.join('\r\n')], { type:'text/csv;charset=utf-8;' });
