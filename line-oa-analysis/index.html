@@ -67,7 +67,16 @@ window.dash = (function () {
   .sw-upd .l { font-size: 12px; font-weight: 600; color: var(--muted); }
   .sw-upd .v { font-size: 15px; font-weight: 700; color: var(--navy); white-space: nowrap; }
   .sw-filter { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--muted); }
-  @media (max-width: 520px) { .sw-topbar h1 { font-size: 15px; } }
+  .sw-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (max-width: 640px) {
+    .sw-topbar { flex-wrap: nowrap; padding-block: 6px; gap: 8px; }
+    .sw-topbar img { height: 24px; }
+    .sw-topbar .div, .sw-topbar h1 span, .sw-upd { display: none; }
+    .sw-topbar h1 { font-size: 13px; flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sw-topbar .right { margin-left: 0; flex: 0 0 auto; }
+    .sw-filter .ft { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .sw-topbar .dash-select { font-size: 12px; }
+  }
 
   .sw-wrap { width: 100%; max-width: none; margin: 0; padding-block: 20px 56px; padding-left: max(16px, 2.4vw); padding-right: max(16px, 2.4vw);
     display: flex; flex-direction: column; gap: 16px; }
@@ -102,6 +111,7 @@ window.dash = (function () {
   .sw-row { display: flex; flex-wrap: wrap; gap: 16px; }
   .sw-row > .sw-card { flex: 1 1 300px; }
   .sw-row > .sw-wide { flex: 2 1 460px; }
+  .sw-row > .sw-half { flex: 1 1 calc(50% - 8px); min-width: min(100%, 320px); }
   .sw-chart { position: relative; min-height: 220px; width: 100%; }
   .sw-chart.sw-tall { min-height: 300px; }
   .sw-chart svg { display: block; overflow: visible; }
@@ -152,7 +162,7 @@ window.dash = (function () {
     <h1>LINE OA SANWA Retail Shop <span>· วิเคราะห์พฤติกรรมลูกค้า 2020–2026</span></h1>
     <div class="right">
       <span class="sw-upd"><span class="l">ข้อมูลถึงวันที่</span><span class="v">20 พฤศจิกายน 2569</span></span>
-      <label class="sw-filter" for="sw-year">ช่วงเวลา
+      <label class="sw-filter" for="sw-year"><span class="ft">ช่วงเวลา</span>
         <select class="dash-select" id="sw-year" data-draw="yearSel" data-source="bc_year_count"></select>
       </label>
     </div>
@@ -188,6 +198,29 @@ window.dash = (function () {
         <span class="sw-big" data-draw="kv" data-fmt="pct1" data-source="friends_yearly" data-col="year" data-field="block_rate">—</span>
         <span class="sw-delta">บล็อก ÷ เพื่อนทั้งหมด</span>
       </div>
+    </div>
+  </div>
+
+  <!-- Charts row A: friends -->
+  <div class="sw-row">
+    <div class="sw-card sw-half" id="fig-friends-trend">
+      <h3>เพื่อน · ส่งถึงได้ · บล็อก รายเดือน</h3>
+      <div class="sw-legend">
+        <span><i class="sw-sw" data-c="0"></i>เพื่อนทั้งหมด</span>
+        <span><i class="sw-sw" data-c="1"></i>ส่งถึงได้</span>
+        <span><i class="sw-sw" data-c="2"></i>บล็อกสะสม</span>
+      </div>
+      <div class="sw-chart" data-draw="friendsLine" data-source="friends_monthly"></div>
+      <span class="sw-note">ค่า ณ สิ้นเดือน · แถบสีอ่อนคือปีที่เลือก</span>
+    </div>
+    <div class="sw-card sw-half" id="fig-friends-year">
+      <h3>เพื่อนเพิ่มสุทธิ เทียบ บล็อกเพิ่ม รายปี</h3>
+      <div class="sw-legend">
+        <span><i class="sw-sw" data-c="0"></i>เพื่อนเพิ่มสุทธิ</span>
+        <span><i class="sw-sw" data-c="2"></i>บล็อกเพิ่ม</span>
+      </div>
+      <div class="sw-chart" data-draw="yearBars" data-source="friends_yearly"></div>
+      <span class="sw-note">ปี 2026 นับถึง 20 พ.ย.</span>
     </div>
   </div>
 
@@ -251,29 +284,6 @@ window.dash = (function () {
           <span class="k"><i class="sw-sw" data-c="1"></i>Promotion</span><span class="n" data-draw="kv" data-none="ไม่ได้ส่ง" data-fmt="pct1" data-source="bc_year_type" data-col="key" data-k="{y}-Promotion" data-field="click_to_open">—</span>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Charts row A: friends -->
-  <div class="sw-row">
-    <div class="sw-card sw-wide" id="fig-friends-trend">
-      <h3>เพื่อน · ส่งถึงได้ · บล็อก รายเดือน</h3>
-      <div class="sw-legend">
-        <span><i class="sw-sw" data-c="0"></i>เพื่อนทั้งหมด</span>
-        <span><i class="sw-sw" data-c="1"></i>ส่งถึงได้</span>
-        <span><i class="sw-sw" data-c="2"></i>บล็อกสะสม</span>
-      </div>
-      <div class="sw-chart" data-draw="friendsLine" data-source="friends_monthly"></div>
-      <span class="sw-note">ค่า ณ สิ้นเดือน · แถบสีอ่อนคือปีที่เลือก</span>
-    </div>
-    <div class="sw-card" id="fig-friends-year">
-      <h3>เพื่อนเพิ่มสุทธิ เทียบ บล็อกเพิ่ม รายปี</h3>
-      <div class="sw-legend">
-        <span><i class="sw-sw" data-c="0"></i>เพื่อนเพิ่มสุทธิ</span>
-        <span><i class="sw-sw" data-c="2"></i>บล็อกเพิ่ม</span>
-      </div>
-      <div class="sw-chart" data-draw="yearBars" data-source="friends_yearly"></div>
-      <span class="sw-note">ปี 2026 นับถึง 20 พ.ย.</span>
     </div>
   </div>
 
