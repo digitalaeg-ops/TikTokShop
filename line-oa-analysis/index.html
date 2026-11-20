@@ -35,7 +35,7 @@ window.dash = (function () {
   }
   function draw(name, fn) { if (fn) { if (!draws[name]) order.push(name); draws[name] = fn; } else run(name); }
   function runAll() { order.forEach(run); }
-  return { data: data, draw: draw, runAll: runAll, colors: ['#0AA89E', '#234E9C', '#3f8cf2'] };
+  return { data: data, draw: draw, runAll: runAll, colors: ['#0AA89E', '#234E9C', '#E24C46'] };
 })();
 </script>
 <style>
@@ -484,7 +484,7 @@ window.SW = (function () {
       hide: function () { t.hidden = true; }
     };
   }
-  var C = ['#0AA89E', '#234E9C', '#3f8cf2'];
+  var C = ['#0AA89E', '#234E9C', '#E24C46'];  // [2] = blocks, same red as the 'blocks added' KPI
   var TYPE = { Content: 'Content ให้ความรู้', Promotion: 'Promotion', Other: 'อื่นๆ' };
   function color(t) { return t === 'Content' ? C[0] : t === 'Promotion' ? C[1] : '#d5dbe6'; }
   function svg(el, H, label) {
