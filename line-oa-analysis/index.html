@@ -117,7 +117,7 @@ window.dash = (function () {
   .sw-row > .sw-card { flex: 1 1 300px; }
   .sw-row > .sw-wide { flex: 2 1 460px; }
   .sw-row5 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
-  @media (min-width: 1400px) { .sw-row5 { grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr; } .sw-row5 > * { min-width: 0; } }
+  @media (min-width: 1400px) { .sw-row5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
   .sw-row > .sw-half { flex: 1 1 calc(50% - 8px); min-width: min(100%, 320px); }
   .sw-chart { position: relative; min-height: 200px; width: 100%; }
   .sw-chart.sw-tall { min-height: 240px; }
