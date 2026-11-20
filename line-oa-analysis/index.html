@@ -402,7 +402,7 @@ window.dash = (function () {
           <option value="ctr">CTR สูงสุด</option>
           <option value="open_rate">อัตราเปิดอ่านสูงสุด</option>
           <option value="date">ส่งล่าสุด</option>
-          <option value="weekday">วันที่ส่ง (จันทร์ → อาทิตย์)</option>
+          <option value="dateasc">วันที่ส่ง (ต้นปี → ปลายปี)</option>
         </select>
       </label>
       <span class="sw-note" data-draw="bcCount">—</span>
@@ -916,13 +916,7 @@ window.SWlist = function () {
   var L = r.data.filter(function (d) { return (!t || d.type === t) && (yr === 'all' || String(d.year) === yr); });
   L.sort(function (a, b) {
     if (s === 'date') return a.sentDate < b.sentDate ? 1 : -1;
-    if (s === 'weekday') {
-      var wa = SW.wd(a.sentDate), wb = SW.wd(b.sentDate);
-      if (wa !== wb) return wa - wb;
-      var ta = String(a.sentDate).slice(11), tb = String(b.sentDate).slice(11);
-      if (ta !== tb) return ta < tb ? -1 : 1;
-      return a.sentDate < b.sentDate ? 1 : -1;
-    }
+    if (s === 'dateasc') return a.sentDate < b.sentDate ? -1 : a.sentDate > b.sentDate ? 1 : 0;
     var av = SW.bad(a[s]) ? -1 : +a[s], bv = SW.bad(b[s]) ? -1 : +b[s];
     return bv - av;
   });
