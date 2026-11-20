@@ -116,6 +116,8 @@ window.dash = (function () {
   .sw-row { display: flex; flex-wrap: wrap; gap: 16px; }
   .sw-row > .sw-card { flex: 1 1 300px; }
   .sw-row > .sw-wide { flex: 2 1 460px; }
+  .sw-row5 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+  @media (min-width: 1400px) { .sw-row5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
   .sw-row > .sw-half { flex: 1 1 calc(50% - 8px); min-width: min(100%, 320px); }
   .sw-chart { position: relative; min-height: 200px; width: 100%; }
   .sw-chart.sw-tall { min-height: 240px; }
@@ -221,9 +223,9 @@ window.dash = (function () {
     </div>
   </div>
 
-  <!-- Charts row A: friends -->
-  <div class="sw-row">
-    <div class="sw-card sw-half" id="fig-friends-trend">
+  <!-- Friends + audience: one row of five -->
+  <div class="sw-row sw-row5" id="audience">
+    <div class="sw-card" id="fig-friends-trend">
       <h3>เพื่อน · ส่งถึงได้ · บล็อก รายเดือน</h3>
       <div class="sw-legend">
         <span><i class="sw-sw" data-c="0"></i>เพื่อนทั้งหมด</span>
@@ -233,7 +235,7 @@ window.dash = (function () {
       <div class="sw-chart" data-draw="friendsLine" data-source="friends_monthly"></div>
       <span class="sw-note">ค่า ณ สิ้นเดือน · แถบสีอ่อนคือปีที่เลือก</span>
     </div>
-    <div class="sw-card sw-half" id="fig-friends-year">
+    <div class="sw-card" id="fig-friends-year">
       <h3>เพื่อนเพิ่มสุทธิ เทียบ บล็อกเพิ่ม รายปี</h3>
       <div class="sw-legend">
         <span><i class="sw-sw" data-c="0"></i>เพื่อนเพิ่มสุทธิ</span>
@@ -242,10 +244,6 @@ window.dash = (function () {
       <div class="sw-chart" data-draw="yearBars" data-source="friends_yearly"></div>
       <span class="sw-note">ปี 2026 นับถึง 20 พ.ย.</span>
     </div>
-  </div>
-
-  <!-- Audience -->
-  <div class="sw-row" id="audience">
     <div class="sw-card" id="fig-gender">
       <h3>สัดส่วนเพศของผู้ติดตาม</h3>
       <div class="sw-legend">
