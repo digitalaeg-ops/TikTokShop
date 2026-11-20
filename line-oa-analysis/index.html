@@ -140,6 +140,12 @@ window.dash = (function () {
   .sw td.img { width: 72px; padding-block: 6px; }
   .sw-thumb { display: block; width: 56px; height: 56px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
   .sw-chart.sw-heat { min-height: 260px; }
+  .sw-cardhead { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-start; justify-content: space-between; }
+  .sw-avgs { display: flex; flex-wrap: wrap; gap: 10px; }
+  .sw-avg { display: flex; flex-direction: column; gap: 2px; min-width: 150px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+  .sw-avg .l { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .sw-avg b { font-size: 22px; font-weight: 400; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .sw td.d .wd { color: var(--ink); font-weight: 600; margin-right: 6px; }
   .sw-thumbbtn { display: block; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 10px; }
   .sw-thumbbtn:hover .sw-thumb { border-color: var(--teal-2); box-shadow: 0 0 0 2px var(--accent-soft); }
   .sw-thumbbtn:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
@@ -375,7 +381,13 @@ window.dash = (function () {
 
   <!-- Broadcast list -->
   <div class="sw-card" id="fig-list">
-    <h3>รายการบรอดแคสต์</h3>
+    <div class="sw-cardhead">
+      <h3>รายการบรอดแคสต์</h3>
+      <div class="sw-avgs">
+        <div class="sw-avg"><span class="l">เฉลี่ยอัตราเปิดอ่าน</span><b data-draw="bcAvg" data-metric="open">—</b></div>
+        <div class="sw-avg"><span class="l">เฉลี่ย CTR</span><b data-draw="bcAvg" data-metric="ctr">—</b></div>
+      </div>
+    </div>
     <div class="sw-controls">
       <label for="sw-bc-type">ประเภท
         <select class="dash-select" id="sw-bc-type">
@@ -390,6 +402,7 @@ window.dash = (function () {
           <option value="ctr">CTR สูงสุด</option>
           <option value="open_rate">อัตราเปิดอ่านสูงสุด</option>
           <option value="date">ส่งล่าสุด</option>
+          <option value="weekday">วันที่ส่ง (จันทร์ → อาทิตย์)</option>
         </select>
       </label>
       <span class="sw-note" data-draw="bcCount">—</span>
@@ -410,26 +423,28 @@ window.dash = (function () {
         <tbody data-draw="bcRows"></tbody>
       </table>
     </div>
-    <span class="sw-note">ใช้ช่วงเวลาที่เลือกด้านบน · ผู้ใช้คลิกและ CTR แสดง “&lt;20” เมื่อ LINE ไม่เปิดเผยจำนวนคลิกที่ต่ำกว่า 20 คน</span>
-  </div>
-
-  <div class="sw-card sw-insight" id="takeaway-card">
-    <p id="takeaway">ปี 2026 (ถึง 20 พ.ย.) เพื่อนเพิ่มสุทธิ <b class="sw-num" data-draw="v" data-fmt="signed" data-source="friends_yearly" data-field="net_adds" data-where="year=2026">—</b> คน แต่ถูกบล็อกเพิ่ม <b class="sw-num" data-draw="v" data-source="friends_yearly" data-field="blocks_added" data-where="year=2026">—</b> คน · ทั้งช่วง 2020–2026 Content ให้ความรู้ได้อัตราคลิก <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Content">—</b> เทียบ Promotion <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Promotion">—</b></p>
-    <span class="sw-sub">ข้อมูลส่งออกจาก LINE OA Manager · เพื่อน 1 ม.ค. 2020 – 20 พ.ย. 2026 · บรอดแคสต์ 616 ครั้ง · คุณสมบัติผู้ติดตาม ณ 20 พ.ย. 2026</span>
+    <span class="sw-note">ใช้ช่วงเวลาที่เลือกด้านบน · ค่าเฉลี่ยคิดจากทุกรายการที่ตรงกับตัวกรอง (รวมผู้เปิด ÷ รวมผู้รับ, รวมผู้คลิก ÷ รวมผู้รับ) · ผู้ใช้คลิกและ CTR แสดง “&lt;20” เมื่อ LINE ไม่เปิดเผยจำนวนคลิกที่ต่ำกว่า 20 คน</span>
   </div>
 
   <dialog class="sw-lb" id="sw-lightbox" data-draw="lightbox" aria-label="ภาพบรอดแคสต์"></dialog>
 
-  <!-- Findings -->
-  <div class="sw-card sw-find" id="findings">
-    <h3>ข้อค้นพบและข้อเสนอแนะ</h3>
-    <ol>
-      <li><b>หาเพื่อนใหม่ได้น้อยลงมาก</b> เพื่อนเพิ่มสุทธิ <span class="sw-num" data-draw="v" data-source="friends_yearly" data-field="net_adds" data-where="year=2022">—</span> คนในปี 2022 เหลือ <span class="sw-num" data-draw="v" data-source="friends_yearly" data-field="net_adds" data-where="year=2025">—</span> คนในปี 2025 และตั้งแต่ปี 2024 บล็อกเพิ่มมากกว่าเพื่อนใหม่ทุกปี ควรเพิ่มช่องทางชวนแอดไลน์ เช่น QR Code ที่หน้าร้าน/บนบรรจุภัณฑ์ คูปองเพื่อนใหม่ และลิงก์จาก TikTok Shop</li>
-      <li><b>ผู้ติดตามเป็นคนวัยกลางคนในต่างจังหวัด</b> อายุ 40–44 ปี <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_age" data-field="total" data-where="age_group=40–44">—</span> และ 45–49 ปี <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_age" data-field="total" data-where="age_group=45–49">—</span> ภาคอีสาน <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_area" data-field="percentage" data-where="area_th=ภาคอีสาน">—</span> กรุงเทพฯ เพียง <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_area" data-field="percentage" data-where="area_th=กรุงเทพฯ">—</span> ข้อความควรอ่านง่าย เน้นความทน ความคุ้มค่า และการขายต่อหน้าร้าน</li>
-      <li><b>Content ให้ความรู้ได้คลิกดีกว่า แต่หยุดส่งไปแล้ว</b> คลิกต่อการเปิด <span class="sw-num" data-draw="v" data-fmt="pct1" data-source="bc_year_type" data-field="click_to_open" data-where="key=all-Content">—</span> เทียบ Promotion <span class="sw-num" data-draw="v" data-fmt="pct1" data-source="bc_year_type" data-field="click_to_open" data-where="key=all-Promotion">—</span> แต่ส่งเพียง <span class="sw-num" data-draw="v" data-source="bc_year_count" data-field="Content" data-where="year=2025">—</span> ครั้งในปี 2025 และไม่มีเลยในปี 2026 ควรกลับมาส่ง Content 1–2 ครั้งต่อเดือน สลับกับโปรโมชัน</li>
-      <li><b>CTR ของ Promotion ลดลงต่อเนื่อง</b> จาก <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=2021-Promotion">—</span> ในปี 2021 เหลือ <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=2026-Promotion">—</span> ในปี 2026 ควรลดข้อความชวนเติมสต็อก (CTR <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="promo_subtype" data-field="ctr" data-where="key=all%7Cชวนเติมสต็อก">—</span>) และเก็บข้อความเปิดโปรต้นเดือนที่ได้ผลดีสุด (CTR <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="promo_subtype" data-field="ctr" data-where="key=all%7Cเปิดโปรต้นเดือน">—</span>)</li>
-      <li><b>ทดสอบเวลาส่ง</b> Content ส่งวันศุกร์ช่วง 19:00–20:00 น. ส่วน Promotion ส่งวันอังคาร 11:00 น. เกือบทั้งหมด ควรทดลองสลับเวลา (A/B) และแบ่งกลุ่มตามภูมิภาคสำหรับโปรเฉพาะพื้นที่</li>
-    </ol>
+  <!-- Note + analysis -->
+  <div class="sw-row" id="notes">
+    <div class="sw-card sw-insight" id="takeaway-card">
+      <h3>Note</h3>
+      <p id="takeaway">ปี 2026 (ถึง 20 พ.ย.) เพื่อนเพิ่มสุทธิ <b class="sw-num" data-draw="v" data-fmt="signed" data-source="friends_yearly" data-field="net_adds" data-where="year=2026">—</b> คน แต่ถูกบล็อกเพิ่ม <b class="sw-num" data-draw="v" data-source="friends_yearly" data-field="blocks_added" data-where="year=2026">—</b> คน · ทั้งช่วง 2020–2026 Content ให้ความรู้ได้อัตราคลิก <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Content">—</b> เทียบ Promotion <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Promotion">—</b></p>
+      <span class="sw-sub">ข้อมูลส่งออกจาก LINE OA Manager · เพื่อน 1 ม.ค. 2020 – 20 พ.ย. 2026 · บรอดแคสต์ 616 ครั้ง · คุณสมบัติผู้ติดตาม ณ 20 พ.ย. 2026</span>
+    </div>
+    <div class="sw-card sw-find sw-wide" id="findings">
+      <h3>วิเคราะห์และเสนอแนะ</h3>
+      <ol>
+        <li><b>หาเพื่อนใหม่ได้น้อยลงมาก</b> เพื่อนเพิ่มสุทธิ <span class="sw-num" data-draw="v" data-source="friends_yearly" data-field="net_adds" data-where="year=2022">—</span> คนในปี 2022 เหลือ <span class="sw-num" data-draw="v" data-source="friends_yearly" data-field="net_adds" data-where="year=2025">—</span> คนในปี 2025 และตั้งแต่ปี 2024 บล็อกเพิ่มมากกว่าเพื่อนใหม่ทุกปี ควรเพิ่มช่องทางชวนแอดไลน์ เช่น QR Code ที่หน้าร้าน/บนบรรจุภัณฑ์ คูปองเพื่อนใหม่ และลิงก์จาก TikTok Shop</li>
+        <li><b>ผู้ติดตามเป็นคนวัยกลางคนในต่างจังหวัด</b> อายุ 40–44 ปี <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_age" data-field="total" data-where="age_group=40–44">—</span> และ 45–49 ปี <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_age" data-field="total" data-where="age_group=45–49">—</span> ภาคอีสาน <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_area" data-field="percentage" data-where="area_th=ภาคอีสาน">—</span> กรุงเทพฯ เพียง <span class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_area" data-field="percentage" data-where="area_th=กรุงเทพฯ">—</span> ข้อความควรอ่านง่าย เน้นความทน ความคุ้มค่า และการขายต่อหน้าร้าน</li>
+        <li><b>Content ให้ความรู้ได้คลิกดีกว่า แต่หยุดส่งไปแล้ว</b> คลิกต่อการเปิด <span class="sw-num" data-draw="v" data-fmt="pct1" data-source="bc_year_type" data-field="click_to_open" data-where="key=all-Content">—</span> เทียบ Promotion <span class="sw-num" data-draw="v" data-fmt="pct1" data-source="bc_year_type" data-field="click_to_open" data-where="key=all-Promotion">—</span> แต่ส่งเพียง <span class="sw-num" data-draw="v" data-source="bc_year_count" data-field="Content" data-where="year=2025">—</span> ครั้งในปี 2025 และไม่มีเลยในปี 2026 ควรกลับมาส่ง Content 1–2 ครั้งต่อเดือน สลับกับโปรโมชัน</li>
+        <li><b>CTR ของ Promotion ลดลงต่อเนื่อง</b> จาก <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=2021-Promotion">—</span> ในปี 2021 เหลือ <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=2026-Promotion">—</span> ในปี 2026 ควรลดข้อความชวนเติมสต็อก (CTR <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="promo_subtype" data-field="ctr" data-where="key=all%7Cชวนเติมสต็อก">—</span>) และเก็บข้อความเปิดโปรต้นเดือนที่ได้ผลดีสุด (CTR <span class="sw-num" data-draw="v" data-fmt="pct2" data-source="promo_subtype" data-field="ctr" data-where="key=all%7Cเปิดโปรต้นเดือน">—</span>)</li>
+        <li><b>ทดสอบเวลาส่ง</b> Content ส่งวันศุกร์ช่วง 19:00–20:00 น. ส่วน Promotion ส่งวันอังคาร 11:00 น. เกือบทั้งหมด ควรทดลองสลับเวลา (A/B) และแบ่งกลุ่มตามภูมิภาคสำหรับโปรเฉพาะพื้นที่</li>
+      </ol>
+    </div>
   </div>
 
   <details id="method">
@@ -502,9 +517,12 @@ window.SW = (function () {
     var s = thumb.map[k];
     return typeof s === 'string' && s.indexOf('data:image/') === 0 ? s : '';
   }
-  var ALL = ['kv', 'plabel', 'heatmap', 'hmNote', 'promoRows', 'promoNote', 'friendsLine', 'yearBars', 'countStack', 'rateLine', 'bcRows', 'bcCount'];
+  var DAYS = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'];
+  function wd(s) { var p = String(s).slice(0, 10).split('-'); var dt = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); return (dt.getUTCDay() + 6) % 7; }
+  function dayName(s) { var i = wd(s); return isNaN(i) ? '' : DAYS[i]; }
+  var ALL = ['kv', 'plabel', 'heatmap', 'hmNote', 'promoRows', 'promoNote', 'friendsLine', 'yearBars', 'countStack', 'rateLine', 'bcRows', 'bcCount', 'bcAvg'];
   function redraw() { ALL.forEach(function (n) { dash.draw(n); }); }
-  return { C: C, h: h, thumb: thumb, num: num, pct: pct, signed: signed, fmt: fmt, year: year, rows: rows, textW: textW, tip: tip, TYPE: TYPE, color: color, bad: bad, svg: svg, redraw: redraw };
+  return { C: C, h: h, thumb: thumb, wd: wd, dayName: dayName, num: num, pct: pct, signed: signed, fmt: fmt, year: year, rows: rows, textW: textW, tip: tip, TYPE: TYPE, color: color, bad: bad, svg: svg, redraw: redraw };
 })();
 
 document.querySelectorAll('.sw-sw').forEach(function (e) {
@@ -515,7 +533,7 @@ document.querySelectorAll('#sw-hm-type, #sw-hm-metric').forEach(function (s) {
   s.addEventListener('change', function () { dash.draw('heatmap'); dash.draw('hmNote'); });
 });
 document.querySelectorAll('#sw-bc-type, #sw-bc-sort').forEach(function (s) {
-  s.addEventListener('change', function () { dash.draw('bcRows'); dash.draw('bcCount'); });
+  s.addEventListener('change', function () { dash.draw('bcRows'); dash.draw('bcCount'); dash.draw('bcAvg'); });
 });
 </script>
 
@@ -898,6 +916,13 @@ window.SWlist = function () {
   var L = r.data.filter(function (d) { return (!t || d.type === t) && (yr === 'all' || String(d.year) === yr); });
   L.sort(function (a, b) {
     if (s === 'date') return a.sentDate < b.sentDate ? 1 : -1;
+    if (s === 'weekday') {
+      var wa = SW.wd(a.sentDate), wb = SW.wd(b.sentDate);
+      if (wa !== wb) return wa - wb;
+      var ta = String(a.sentDate).slice(11), tb = String(b.sentDate).slice(11);
+      if (ta !== tb) return ta < tb ? -1 : 1;
+      return a.sentDate < b.sentDate ? 1 : -1;
+    }
     var av = SW.bad(a[s]) ? -1 : +a[s], bv = SW.bad(b[s]) ? -1 : +b[s];
     return bv - av;
   });
@@ -926,6 +951,17 @@ dash.draw('lightbox', {
   }
 });
 
+dash.draw('bcAvg', function (el) {
+  var L = SWlist();
+  if (!L || !L.length) { el.textContent = '—'; return; }
+  var m = el.getAttribute('data-metric'), num = 0, den = 0;
+  L.forEach(function (d) {
+    if (m === 'open') { num += +d.open || 0; den += +d.deliveredCount || 0; }
+    else if (!SW.bad(d.clickUU)) { num += +d.clickUU; den += +d.deliveredCount || 0; }
+  });
+  el.textContent = den ? (num / den * 100).toFixed(m === 'ctr' ? 2 : 1) + '%' : '—';
+});
+
 dash.draw('bcCount', function (el) {
   var L = SWlist();
   if (!L) { el.textContent = '—'; return; }
@@ -939,7 +975,7 @@ dash.draw('bcRows', function (tb) {
   L.slice(0, 60).forEach(function (d) {
     var tr = document.createElement('tr'); tr.setAttribute('data-key', encodeURIComponent(String(d.broadcastId)));
     function td(txt, cls) { var c = document.createElement('td'); c.textContent = txt; if (cls) c.className = cls; tr.appendChild(c); return c; }
-    td(d.sentDate, 'd');
+    var cd = td('', 'd'); var wsp = document.createElement('span'); wsp.className = 'wd'; wsp.textContent = SW.dayName(d.sentDate); cd.append(wsp, document.createTextNode(String(d.sentDate)));
     var c2 = td('', ''); var pill = document.createElement('span'); pill.className = 'sw-pill'; pill.textContent = SW.TYPE[d.type] || d.type; pill.style.background = SW.color(d.type); c2.appendChild(pill);
     var ci = td('', 'img'), src = SW.thumb(d.thumb);
     if (src) {
