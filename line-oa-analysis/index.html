@@ -379,13 +379,15 @@ window.dash = (function () {
           <th>ภาพ</th>
           <th data-field="title">หัวข้อข้อความ</th>
           <th class="r" data-field="deliveredCount">ส่งถึง</th>
-          <th class="r" data-field="open_rate">เปิดอ่าน</th>
+          <th class="r" data-field="open">เปิดอ่าน</th>
+          <th class="r" data-field="clickUU">ผู้ใช้คลิก</th>
+          <th class="r" data-field="open_rate">อัตราเปิดอ่าน</th>
           <th class="r" data-field="ctr">CTR</th>
         </tr></thead>
         <tbody data-draw="bcRows"></tbody>
       </table>
     </div>
-    <span class="sw-note">ใช้ช่วงเวลาที่เลือกด้านบน · CTR แสดง “&lt;20” เมื่อ LINE ไม่เปิดเผยจำนวนคลิกที่ต่ำกว่า 20 คน</span>
+    <span class="sw-note">ใช้ช่วงเวลาที่เลือกด้านบน · ผู้ใช้คลิกและ CTR แสดง “&lt;20” เมื่อ LINE ไม่เปิดเผยจำนวนคลิกที่ต่ำกว่า 20 คน</span>
   </div>
 
   <div class="sw-card sw-insight" id="takeaway-card">
@@ -829,6 +831,8 @@ dash.draw('bcRows', function (tb) {
     } else { var ph = document.createElement('span'); ph.className = 'sw-thumb none'; ph.textContent = 'ไม่มีภาพ'; ci.appendChild(ph); }
     td(d.title, 't');
     td(SW.num(d.deliveredCount), 'r');
+    td(SW.num(d.open), 'r');
+    td(SW.bad(d.clickUU) ? '<20' : SW.num(d.clickUU), 'r');
     td(SW.pct(d.open_rate, 1), 'r');
     td(SW.bad(d.ctr) ? '<20' : SW.pct(d.ctr, 2), 'r');
     tb.appendChild(tr);
