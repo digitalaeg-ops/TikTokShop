@@ -76,7 +76,6 @@ window.dash = (function () {
     padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   .sw h2 { font-size: 16px; font-weight: 700; margin: 0; }
   .sw h3 { font-size: 14px; font-weight: 700; margin: 0; text-wrap: balance; }
-  .sw-insight { border-left: 4px solid var(--teal-2); }
   .sw-insight p { font-size: 14.5px; }
   .sw-insight b { color: var(--navy); }
   .sw-sub { color: var(--muted); font-size: 12px; }
@@ -159,10 +158,6 @@ window.dash = (function () {
     </div>
   </header>
   <div class="sw-wrap">
-  <div class="sw-card sw-insight" id="takeaway-card">
-    <p id="takeaway">ปี 2026 (ถึง 20 พ.ย.) เพื่อนเพิ่มสุทธิ <b class="sw-num" data-draw="v" data-fmt="signed" data-source="friends_yearly" data-field="net_adds" data-where="year=2026">—</b> คน แต่ถูกบล็อกเพิ่ม <b class="sw-num" data-draw="v" data-source="friends_yearly" data-field="blocks_added" data-where="year=2026">—</b> คน · ทั้งช่วง 2020–2026 Content ให้ความรู้ได้อัตราคลิก <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Content">—</b> เทียบ Promotion <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Promotion">—</b></p>
-    <span class="sw-sub">ข้อมูลส่งออกจาก LINE OA Manager · เพื่อน 1 ม.ค. 2020 – 20 พ.ย. 2026 · บรอดแคสต์ 616 ครั้ง · คุณสมบัติผู้ติดตาม ณ 20 พ.ย. 2026</span>
-  </div>
 
   <!-- KPI: friends -->
   <div class="sw-band" id="kpi-friends">
@@ -353,6 +348,11 @@ window.dash = (function () {
     <span class="sw-note">ใช้ช่วงเวลาที่เลือกด้านบน · CTR แสดง “&lt;20” เมื่อ LINE ไม่เปิดเผยจำนวนคลิกที่ต่ำกว่า 20 คน</span>
   </div>
 
+  <div class="sw-card sw-insight" id="takeaway-card">
+    <p id="takeaway">ปี 2026 (ถึง 20 พ.ย.) เพื่อนเพิ่มสุทธิ <b class="sw-num" data-draw="v" data-fmt="signed" data-source="friends_yearly" data-field="net_adds" data-where="year=2026">—</b> คน แต่ถูกบล็อกเพิ่ม <b class="sw-num" data-draw="v" data-source="friends_yearly" data-field="blocks_added" data-where="year=2026">—</b> คน · ทั้งช่วง 2020–2026 Content ให้ความรู้ได้อัตราคลิก <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Content">—</b> เทียบ Promotion <b class="sw-num" data-draw="v" data-fmt="pct2" data-source="bc_year_type" data-field="ctr" data-where="key=all-Promotion">—</b></p>
+    <span class="sw-sub">ข้อมูลส่งออกจาก LINE OA Manager · เพื่อน 1 ม.ค. 2020 – 20 พ.ย. 2026 · บรอดแคสต์ 616 ครั้ง · คุณสมบัติผู้ติดตาม ณ 20 พ.ย. 2026</span>
+  </div>
+
   <!-- Findings -->
   <div class="sw-card sw-find" id="findings">
     <h3>ข้อค้นพบและข้อเสนอแนะ</h3>
@@ -425,9 +425,10 @@ window.SW = (function () {
     var s = d3.select(el).append('svg').attr('width', '100%').attr('height', H).attr('viewBox', '0 0 ' + W + ' ' + H).attr('role', 'img').attr('aria-label', label);
     return { s: s, W: W };
   }
+  function h(el) { var w = el.clientWidth || 400; return Math.round(Math.max(220, Math.min(window.innerHeight * 0.42, w * 0.62, 480))); }
   var ALL = ['kv', 'plabel', 'friendsLine', 'yearBars', 'countStack', 'rateLine', 'bcRows', 'bcCount'];
   function redraw() { ALL.forEach(function (n) { dash.draw(n); }); }
-  return { C: C, num: num, pct: pct, signed: signed, fmt: fmt, year: year, rows: rows, textW: textW, tip: tip, TYPE: TYPE, color: color, bad: bad, svg: svg, redraw: redraw };
+  return { C: C, h: h, num: num, pct: pct, signed: signed, fmt: fmt, year: year, rows: rows, textW: textW, tip: tip, TYPE: TYPE, color: color, bad: bad, svg: svg, redraw: redraw };
 })();
 
 document.querySelectorAll('.sw-sw').forEach(function (e) {
@@ -495,7 +496,7 @@ dash.draw('friendsLine', function (el) {
   el.replaceChildren();
   var pm = d3.utcParse('%Y-%m');
   var D = data.map(function (d) { return { t: pm(d.month), c: +d.contacts, r: +d.reach, b: +d.blocks, a: +d.net_adds, ba: +d.blocks_added }; });
-  var H = 220, o = SW.svg(el, H, 'กราฟเส้นจำนวนเพื่อนทั้งหมด จำนวนที่ส่งถึงได้ และบล็อกสะสม รายเดือน ปี 2020 ถึง 2026'), svg = o.s, W = o.W;
+  var H = SW.h(el), o = SW.svg(el, H, 'กราฟเส้นจำนวนเพื่อนทั้งหมด จำนวนที่ส่งถึงได้ และบล็อกสะสม รายเดือน ปี 2020 ถึง 2026'), svg = o.s, W = o.W;
   var y = d3.scaleLinear().domain([0, d3.max(D, function (d) { return d.c; })]).nice().range([H - 24, 8]);
   var yt = y.ticks(4), fmt = d3.format(',');
   var ml = d3.max(yt, function (t) { return SW.textW(svg, fmt(t), 'sw-lbl-m'); }) + 8;
@@ -534,7 +535,7 @@ dash.draw('yearBars', function (el) {
   var data = SW.rows(el, 'friends_yearly'); if (!data) return;
   el.replaceChildren();
   var D = data.filter(function (d) { return d.year !== 'all'; }).map(function (d) { return { y: d.year, a: +d.net_adds, b: +d.blocks_added }; });
-  var H = 220, mt = 18, mb = 24, o = SW.svg(el, H, 'กราฟแท่งเพื่อนเพิ่มสุทธิและบล็อกที่เพิ่มขึ้นรายปี'), svg = o.s, W = o.W, sel = SW.year();
+  var H = SW.h(el), mt = 18, mb = 24, o = SW.svg(el, H, 'กราฟแท่งเพื่อนเพิ่มสุทธิและบล็อกที่เพิ่มขึ้นรายปี'), svg = o.s, W = o.W, sel = SW.year();
   var x = d3.scaleBand().domain(D.map(function (d) { return d.y; })).range([0, W]).padding(0.22);
   var xi = d3.scaleBand().domain(['a', 'b']).range([0, x.bandwidth()]).padding(0.08);
   var y = d3.scaleLinear().domain([0, d3.max(D, function (d) { return Math.max(d.a, d.b); })]).nice().range([H - mb, mt]);
@@ -561,7 +562,7 @@ dash.draw('countStack', function (el) {
   el.replaceChildren();
   var keys = ['Content', 'Promotion', 'Other'];
   var D = data.map(function (d) { return { year: String(d.year), Content: +d.Content, Promotion: +d.Promotion, Other: +d.Other, total: +d.total }; });
-  var H = 220, mt = 18, mb = 24, o = SW.svg(el, H, 'กราฟแท่งซ้อนจำนวนบรอดแคสต์ต่อปี แยก Content Promotion และอื่นๆ'), svg = o.s, W = o.W, sel = SW.year();
+  var H = SW.h(el), mt = 18, mb = 24, o = SW.svg(el, H, 'กราฟแท่งซ้อนจำนวนบรอดแคสต์ต่อปี แยก Content Promotion และอื่นๆ'), svg = o.s, W = o.W, sel = SW.year();
   var x = d3.scaleBand().domain(D.map(function (d) { return d.year; })).range([0, W]).padding(0.25);
   var y = d3.scaleLinear().domain([0, d3.max(D, function (d) { return d.total; })]).nice().range([H - mb, mt]);
   svg.append('g').attr('class', 'sw-axis').attr('transform', 'translate(0,' + (H - mb) + ')').call(d3.axisBottom(x).tickSizeOuter(0));
@@ -595,7 +596,7 @@ dash.draw('rateLine', function (el) {
   var years = Array.from(new Set(R.map(function (d) { return String(d.year); }))).sort();
   var by = {};
   R.forEach(function (d) { if (!SW.bad(d[m])) { (by[d.year] = by[d.year] || {})[d.type] = +d[m]; } });
-  var H = 220, mt = 22, mb = 24, o = SW.svg(el, H, (m === 'ctr' ? 'อัตราคลิก' : 'อัตราเปิดอ่าน') + 'รายปี เปรียบเทียบ Content และ Promotion'), svg = o.s, W = o.W;
+  var H = SW.h(el), mt = 22, mb = 24, o = SW.svg(el, H, (m === 'ctr' ? 'อัตราคลิก' : 'อัตราเปิดอ่าน') + 'รายปี เปรียบเทียบ Content และ Promotion'), svg = o.s, W = o.W;
   var lw = SW.textW(svg, '00.00%', 'sw-lbl') / 2 + 2;
   var x = d3.scalePoint().domain(years).range([lw, W - lw]);
   var vals = R.map(function (d) { return +d[m]; }).filter(function (v) { return !isNaN(v); });
@@ -631,7 +632,7 @@ dash.draw('pyramid', function (el) {
   var data = SW.rows(el, 'demo_age'); if (!data) return;
   el.replaceChildren();
   var D = data.map(function (d) { return { g: d.age_group, m: +d.male, f: +d.female }; }).slice().reverse();
-  var rowH = 25, H = D.length * rowH + 6, o = SW.svg(el, H, 'กราฟพีระมิดสัดส่วนเพื่อนตามช่วงอายุ แยกชายและหญิง'), svg = o.s, W = o.W;
+  var rowH = Math.max(25, Math.min(44, SW.h(el) / D.length)), H = D.length * rowH + 6, o = SW.svg(el, H, 'กราฟพีระมิดสัดส่วนเพื่อนตามช่วงอายุ แยกชายและหญิง'), svg = o.s, W = o.W;
   var cw = d3.max(D, function (d) { return SW.textW(svg, d.g, 'sw-lbl-m'); }) + 14;
   var vw = SW.textW(svg, '00.0%', 'sw-lbl') + 6;
   var half = (W - cw) / 2;
@@ -654,7 +655,7 @@ dash.draw('areaBars', function (el) {
   var data = SW.rows(el, 'demo_area'); if (!data) return;
   el.replaceChildren();
   var D = data.map(function (d) { return { a: d.area_th, p: +d.percentage }; }).sort(function (a, b) { return b.p - a.p; });
-  var rowH = 32, H = D.length * rowH + 4, o = SW.svg(el, H, 'กราฟแท่งสัดส่วนเพื่อนตามภูมิภาค'), svg = o.s, W = o.W;
+  var rowH = Math.max(30, Math.min(52, SW.h(el) / D.length)), H = D.length * rowH + 4, o = SW.svg(el, H, 'กราฟแท่งสัดส่วนเพื่อนตามภูมิภาค'), svg = o.s, W = o.W;
   var lw = d3.max(D, function (d) { return SW.textW(svg, d.a, 'sw-lbl-m'); }) + 10;
   var vw = SW.textW(svg, '00.0%', 'sw-lbl') + 6;
   var x = d3.scaleLinear().domain([0, d3.max(D, function (d) { return d.p; })]).range([0, Math.max(10, W - lw - vw)]);
