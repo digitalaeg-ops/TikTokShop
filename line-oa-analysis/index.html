@@ -191,6 +191,34 @@ window.dash = (function () {
     </div>
   </div>
 
+  <!-- Audience -->
+  <div class="sw-row" id="audience">
+    <div class="sw-card" id="fig-gender">
+      <h3>สัดส่วนเพศของผู้ติดตาม</h3>
+      <div class="sw-legend">
+        <span><i class="sw-sw" data-c="0"></i>ชาย <b class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_gender" data-field="percentage" data-where="gender_th=ชาย">—</b></span>
+        <span><i class="sw-sw" data-c="1"></i>หญิง <b class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_gender" data-field="percentage" data-where="gender_th=หญิง">—</b></span>
+        <span><i class="sw-sw"></i>ไม่ระบุ <b class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_gender" data-field="percentage" data-where="gender_th=ไม่ระบุ">—</b></span>
+      </div>
+      <div class="sw-chart sw-tall" data-draw="genderDonut" data-source="demo_gender"></div>
+      <span class="sw-note">% ของเพื่อน ณ 20 พ.ย. 2026</span>
+    </div>
+    <div class="sw-card" id="fig-age">
+      <h3>อายุและเพศของผู้ติดตาม</h3>
+      <div class="sw-legend">
+        <span><i class="sw-sw" data-c="0"></i>ชาย</span>
+        <span><i class="sw-sw" data-c="1"></i>หญิง</span>
+      </div>
+      <div class="sw-chart sw-tall" data-draw="pyramid" data-source="demo_age"></div>
+      <span class="sw-note">% ของเพื่อน ณ 20 พ.ย. 2026</span>
+    </div>
+    <div class="sw-card" id="fig-area">
+      <h3>ภูมิภาคของผู้ติดตาม</h3>
+      <div class="sw-chart sw-tall" data-draw="areaBars" data-source="demo_area"></div>
+      <span class="sw-note">% ของเพื่อน ณ 20 พ.ย. 2026</span>
+    </div>
+  </div>
+
   <!-- KPI: broadcast -->
   <div class="sw-band" id="kpi-broadcast">
     <div class="sw-bandhead"><h2>วัดผลบรอดแคสต์: Content ให้ความรู้ เทียบ Promotion</h2><span class="sw-period" data-draw="plabel">—</span></div>
@@ -275,24 +303,6 @@ window.dash = (function () {
         <span><i class="sw-sw" data-c="1"></i>Promotion</span>
       </div>
       <div class="sw-chart" data-draw="rateLine" data-metric="open_rate" data-source="bc_year_type"></div>
-    </div>
-  </div>
-
-  <!-- Charts row C: audience + promo -->
-  <div class="sw-row">
-    <div class="sw-card" id="fig-age">
-      <h3>อายุและเพศของผู้ติดตาม</h3>
-      <div class="sw-legend">
-        <span><i class="sw-sw" data-c="0"></i>ชาย <b class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_gender" data-field="percentage" data-where="gender_th=ชาย">—</b></span>
-        <span><i class="sw-sw" data-c="1"></i>หญิง <b class="sw-num" data-draw="v" data-fmt="raw1" data-source="demo_gender" data-field="percentage" data-where="gender_th=หญิง">—</b></span>
-      </div>
-      <div class="sw-chart sw-tall" data-draw="pyramid" data-source="demo_age"></div>
-      <span class="sw-note">% ของเพื่อน ณ 20 พ.ย. 2026</span>
-    </div>
-    <div class="sw-card" id="fig-area">
-      <h3>ภูมิภาคของผู้ติดตาม</h3>
-      <div class="sw-chart sw-tall" data-draw="areaBars" data-source="demo_area"></div>
-      <span class="sw-note">% ของเพื่อน ณ 20 พ.ย. 2026</span>
     </div>
     <div class="sw-card" id="fig-promo-sub">
       <h3>Promotion แยกตามรูปแบบข้อความ</h3>
@@ -627,6 +637,34 @@ dash.draw('rateLine', function (el) {
 </script>
 
 <script>
+/* gender donut */
+dash.draw('genderDonut', function (el) {
+  var data = SW.rows(el, 'demo_gender'); if (!data) return;
+  el.replaceChildren();
+  var col = { 'ชาย': SW.C[0], 'หญิง': SW.C[1] };
+  var D = data.map(function (d) { return { g: d.gender_th, p: +d.percentage }; });
+  var H = Math.max(240, Math.min(SW.h(el), 340)), o = SW.svg(el, H, 'กราฟโดนัทสัดส่วนเพศของเพื่อน'), svg = o.s, W = o.W;
+  var R = Math.min(W, H) / 2 - 6, r = R * 0.62;
+  var g = svg.append('g').attr('transform', 'translate(' + W / 2 + ',' + H / 2 + ')');
+  var arcs = d3.pie().sort(null).value(function (d) { return d.p; }).padAngle(0.012)(D);
+  var arc = d3.arc().innerRadius(r).outerRadius(R).cornerRadius(3);
+  var tp = SW.tip(el);
+  g.selectAll('path').data(arcs).join('path').attr('d', arc)
+    .style('fill', function (d) { return col[d.data.g] || '#d5dbe6'; })
+    .on('pointermove', function (ev, d) { tp.show(ev, [d.data.g, d.data.p.toFixed(1) + '% ของเพื่อน']); })
+    .on('pointerleave', function () { tp.hide(); });
+  g.selectAll('text.pl').data(arcs.filter(function (a) { return a.data.p >= 5; })).join('text')
+    .attr('class', 'sw-lbl pl').style('fill', '#fff').attr('text-anchor', 'middle').attr('dy', '0.35em')
+    .attr('transform', function (d) { return 'translate(' + arc.centroid(d) + ')'; })
+    .text(function (d) { return d.data.p.toFixed(1) + '%'; });
+  var m = D.find(function (d) { return d.g === 'ชาย'; }), f = D.find(function (d) { return d.g === 'หญิง'; });
+  g.append('text').attr('class', 'sw-lbl-m').attr('text-anchor', 'middle').attr('dy', '-0.5em').text('ชาย : หญิง');
+  g.append('text').attr('class', 'sw-lbl').style('font-size', '22px').style('font-weight', '400').attr('text-anchor', 'middle').attr('dy', '1em')
+    .text((m ? Math.round(m.p) : '—') + ' : ' + (f ? Math.round(f.p) : '—'));
+});
+</script>
+
+<script>
 /* age-gender pyramid */
 dash.draw('pyramid', function (el) {
   var data = SW.rows(el, 'demo_age'); if (!data) return;
@@ -733,7 +771,7 @@ dash.runAll();
     t = setTimeout(function () {
       if (window.innerWidth === w) return;
       w = window.innerWidth;
-      ['friendsLine', 'yearBars', 'countStack', 'rateLine', 'pyramid', 'areaBars'].forEach(function (n) { dash.draw(n); });
+      ['friendsLine', 'yearBars', 'countStack', 'rateLine', 'genderDonut', 'pyramid', 'areaBars'].forEach(function (n) { dash.draw(n); });
     }, 150);
   });
 })();
