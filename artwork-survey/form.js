@@ -54,7 +54,8 @@
   // ส่วนกลาง
   html += '<section class="card step" data-sid="about"><h2 style="margin:0 0 14px">เกี่ยวกับคุณ</h2>' +
     (groupsAvail.length > 1 ? q('groups', 'กลุ่มที่คุณรับผิดชอบ', pills('groups', groupsAvail.map(function(g){ return { v:g, label:S.groups[g].pickLabel || S.groups[g].label }; }), 'checkbox', 'big-pills'),
-      { req:1, multi:1, hint:'เลือกได้หลายข้อ — ระบบจะแสดงเฉพาะชุดคำถามของกลุ่มที่เลือก', err:'กรุณาเลือกอย่างน้อย 1 กลุ่ม' }) : '') +
+      L.requireAll ? { hint:'ลิงก์นี้ต้องประเมินครบทั้ง ' + groupsAvail.length + ' ช่องทาง — เลือกไว้ให้แล้ว' }
+                   : { req:1, multi:1, hint:'เลือกได้หลายข้อ — ระบบจะแสดงเฉพาะชุดคำถามของกลุ่มที่เลือก', err:'กรุณาเลือกอย่างน้อย 1 กลุ่ม' }) : '') +
     q('role', 'ตำแหน่ง / บทบาทของคุณ', pills('role', S.roles), { req:1 }) +
     q('usage_freq', 'คุณใช้งาน Artwork Promotion บ่อยแค่ไหน', pills('usage_freq', S.freqs), { req:1 }) +
     '</section>';
@@ -103,12 +104,14 @@
     q('suggestions', 'ข้อเสนอแนะสำหรับการออกแบบปี ' + S.nextYear, area('suggestions', 'อยากให้ปีหน้าเป็นแบบไหน'), { hint:'ไม่บังคับ แต่มีประโยชน์มาก' }) +
     '</section>';
   $('steps').innerHTML = html;
+  // ลิงก์ที่ต้องประเมินครบทุกกลุ่ม: ติ๊กไว้ทั้งหมดและล็อกไม่ให้เอาออก
+  if(L.requireAll) Array.prototype.forEach.call(form.querySelectorAll('input[name="groups"]'), function(i){ i.checked = true; i.disabled = true; i.closest('.pills').classList.add('locked'); });
 
   // ---------- helpers ----------
   function val(name){ var el = form.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : null; }
   function vals(name){ return Array.prototype.map.call(form.querySelectorAll('input[name="' + name + '"]:checked'), function(e){ return e.value; }); }
   function txtVal(name){ var t = form.querySelector('[name="' + name + '"]'); return t && !t.hidden ? t.value.trim() : ''; }
-  function selGroups(){ return groupsAvail.length === 1 ? groupsAvail.slice() : groupsAvail.filter(function(g){ return vals('groups').indexOf(g) > -1; }); }
+  function selGroups(){ return (groupsAvail.length === 1 || L.requireAll) ? groupsAvail.slice() : groupsAvail.filter(function(g){ return vals('groups').indexOf(g) > -1; }); }
   function sec(sid){ return form.querySelector('.step[data-sid="' + sid + '"]'); }
 
   function computeSteps(){
