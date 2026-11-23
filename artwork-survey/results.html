@@ -121,6 +121,7 @@
   <div class="right" id="tools" hidden>
     <button class="btn sm" type="button" data-copy="wholesale" title="คัดลอกลิงก์ 1 ส่งทีมค้าส่ง">🔗 ลิงก์ 1 ค้าส่ง</button>
     <button class="btn sm" type="button" data-copy="channels" title="คัดลอกลิงก์ 2 ส่งทีม Retail / MarketPlace / Website">🔗 ลิงก์ 2</button>
+    <button class="btn sm" type="button" data-copy="all" title="คัดลอกลิงก์ 3 รวมทุกช่องทาง">🔗 ลิงก์ 3 รวม</button>
     <button class="btn sm" type="button" id="refresh">↻ รีเฟรช</button>
     <button class="btn sm" type="button" id="csv">⬇ CSV</button>
     <button class="btn sm" type="button" id="print">🖨 พิมพ์ / PDF</button>
@@ -156,6 +157,7 @@
       <p class="muted" style="margin:0 0 12px">ส่งลิงก์ 1 ให้ทีมค้าส่ง และลิงก์ 2 ให้ทีม Retail / MarketPlace / Website — ผลจะแสดงที่หน้านี้ทันทีที่มีคนตอบ (กด ↻ รีเฟรช)</p>
       <button class="btn primary sm" type="button" data-copy="wholesale">🔗 คัดลอกลิงก์ 1 ค้าส่ง</button>
       <button class="btn primary sm" type="button" data-copy="channels">🔗 คัดลอกลิงก์ 2</button>
+      <button class="btn primary sm" type="button" data-copy="all">🔗 คัดลอกลิงก์ 3 รวมทุกช่องทาง</button>
     </div>
 
     <div id="content">
@@ -382,9 +384,9 @@
     var np = npsOf(rs);
     var better = rs.filter(function(r){ return r.vs_last_year === S.vsLastYear[0] || r.vs_last_year === S.vsLastYear[1]; }).length;
     var worse = rs.filter(function(r){ return r.vs_last_year === S.vsLastYear[3]; }).length;
-    var l1 = all.filter(function(r){ return r.link === 'wholesale'; }).length, l2 = all.length - l1;
+    var linkCnt = Object.keys(S.links).map(function(k){ return S.links[k].short + ' ' + all.filter(function(r){ return r.link === k; }).length; }).filter(function(t){ return !/ 0$/.test(t); }).join(' · ');
     $('kpis').innerHTML = [
-      ['ผู้ตอบแบบประเมิน', n + ' <small>คน</small>', grp === ALL ? ('ลิงก์ 1 ค้าส่ง ' + l1 + ' · ลิงก์ 2 ' + l2) : ('ทั้งหมด ' + all.length + ' คน')],
+      ['ผู้ตอบแบบประเมิน', n + ' <small>คน</small>', grp === ALL ? linkCnt : ('ทั้งหมด ' + all.length + ' คน')],
       ['ความพึงพอใจต่อ Artwork', f2(sat) + ' <small>/ 5</small>', sat == null ? '' : col(sat).label.replace(/^[^ ]+ /, '')],
       ['คะแนนความพึงพอใจหลัก 5 ข้อ', f2(core) + ' <small>/ 5</small>', grp === ALL ? 'เฉลี่ยทุกกลุ่ม' : 'กลุ่ม ' + gl(grp)],
       ['NPS (แนะนำให้ใช้ต่อ)', np.score == null ? '–' : (np.score > 0 ? '+' : '') + np.score, np.n ? ('แนะนำ ' + pct(np.pro, np.n) + '% · ไม่แนะนำ ' + pct(np.det, np.n) + '%') : ''],
@@ -503,7 +505,7 @@
       list.map(function(r){
         var f = isFast(r);
         return '<tr class="' + (f ? 'fast' : '') + '"><td>' + new Date(r.created_at).toLocaleString('th-TH', { day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit' }) + '</td>' +
-          '<td>' + (r.link === 'wholesale' ? 'ลิงก์ 1' : 'ลิงก์ 2') + '</td><td>' + groupBadges(r) + '</td><td>' + esc(r.role) + '</td>' +
+          '<td>' + (S.links[r.link] ? S.links[r.link].short : r.link) + '</td><td>' + groupBadges(r) + '</td><td>' + esc(r.role) + '</td>' +
           '<td>' + dur(r.duration_sec) + (f ? ' <span class="flag" title="ใช้เวลาน้อยกว่า ' + Math.round(S.fastFlagSec / 60) + ' นาที อาจไม่ได้ดู Artwork จริง">⚠ ตอบเร็ว</span>' : '') + '</td>' +
           '<td class="small">' + viewedTxt(r) + '</td><td>' + esc(r.nps) + '</td>' +
           '<td class="no-print"><button class="btn sm del" type="button" data-del="' + esc(r.id) + '">🗑 ลบ</button></td></tr>';
@@ -512,7 +514,7 @@
   $('respTbl').addEventListener('click', function(e){
     var b = e.target.closest('[data-del]'); if(!b) return;
     var id = b.getAttribute('data-del'), r = raw.filter(function(x){ return x.id === id; })[0]; if(!r) return;
-    var desc = (r.link === 'wholesale' ? 'ลิงก์ 1' : 'ลิงก์ 2') + ' · ' + (r.groups || []).map(gl).join(', ') + ' · ' + r.role + ' · ส่งเมื่อ ' + new Date(r.created_at).toLocaleString('th-TH');
+    var desc = (S.links[r.link] ? S.links[r.link].short : r.link) + ' · ' + (r.groups || []).map(gl).join(', ') + ' · ' + r.role + ' · ส่งเมื่อ ' + new Date(r.created_at).toLocaleString('th-TH');
     if(!window.confirm('ลบคำตอบนี้ถาวร?\n\n' + desc + '\n\nลบแล้วกู้คืนไม่ได้')) return;
     var code = ss.get(CODEKEY); b.disabled = true; b.textContent = 'กำลังลบ...';
     fetch(S.supabaseUrl + '/rest/v1/rpc/delete_artwork_survey_v2_response', {
