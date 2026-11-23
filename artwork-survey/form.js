@@ -286,6 +286,14 @@
   // ---------- ปิดรับคำตอบ ----------
   var closeAt = L.closeAt ? new Date(L.closeAt) : null;
   function isClosed(){ return closeAt && Date.now() > closeAt.getTime(); }
+  // โหมดดูตัวอย่าง (?preview=1): เปิดดูคำถามได้แม้ปิดรับแล้ว แต่ส่งคำตอบไม่ได้
+  var PREVIEW = /[?&]preview=1(&|$)/.test(location.search);
+  if(PREVIEW){
+    var pv = document.createElement('div');
+    pv.className = 'view-note'; pv.style.cssText = 'background:#FFF4E0;color:#8A5A00;margin:0 0 14px';
+    pv.innerHTML = '👀 <b>โหมดดูตัวอย่าง</b> — ใช้ดูคำถามเท่านั้น กดส่งคำตอบไม่ได้';
+    $('intro').parentNode.insertBefore(pv, $('intro'));
+  }
   function showClosed(){
     $('formArea').hidden = true; $('intro').hidden = true; $('already').hidden = true; $('done').hidden = true; $('closed').hidden = false;
     window.scrollTo({ top:0 });
@@ -298,6 +306,7 @@
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
+    if(PREVIEW){ var pe = $('submitErr'); pe.textContent = 'โหมดดูตัวอย่าง — ส่งคำตอบไม่ได้ (ข้อมูลไม่ถูกบันทึก)'; pe.hidden = false; return; }
     if(isClosed()){ showClosed(); return; }
     for(var i = 0; i < steps.length; i++){ if(!validate(steps[i])){ show(i); validate(steps[i]); return; } }
     var btn = $('submitBtn'), err = $('submitErr');
@@ -327,7 +336,7 @@
   });
   var savedStep = restoreDraft();
   computeSteps();
-  if(isClosed()) showClosed();
-  else if(store.get(SENT) && !savedStep){ $('already').hidden = false; $('formArea').hidden = true; $('intro').hidden = true; }
+  if(isClosed() && !PREVIEW) showClosed();
+  else if(!PREVIEW && store.get(SENT) && !savedStep){ $('already').hidden = false; $('formArea').hidden = true; $('intro').hidden = true; }
   else show(Math.max(0, steps.indexOf(savedStep)));
 })();
