@@ -14,7 +14,7 @@ window.SURVEY = {
 
   links: {
     wholesale: { label: 'ลิงก์ 1 · ค้าส่ง', short: 'ลิงก์ 1', groups: ['wholesale'], path: '/wholesale', time: '5–6 นาที',
-                 closeAt: '2026-11-23T23:59:59+07:00', closeText: 'วันที่ 23 พ.ย. 69 เวลา 23.59 น.' },
+                 closeAt: '2026-11-25T23:59:59+07:00', closeText: 'วันที่ 25 พ.ย. 69 เวลา 23.59 น.' },
     channels:  { label: 'ลิงก์ 2 · Retail / MarketPlace / Website', short: 'ลิงก์ 2', groups: ['retail', 'marketplace', 'website'], path: '/channels', time: '6 นาที + 2–3 นาทีต่อกลุ่ม',
                  closeAt: '2026-11-20T23:59:59+07:00', closeText: 'วันที่ 20 พ.ย. 69 เวลา 23.59 น.' },
     all:       { label: 'ลิงก์ 3 · รวมทุกช่องทาง', short: 'ลิงก์ 3', groups: ['wholesale', 'retail', 'marketplace', 'website'], path: '/all', time: '6 นาที + 2–3 นาทีต่อกลุ่ม' }
