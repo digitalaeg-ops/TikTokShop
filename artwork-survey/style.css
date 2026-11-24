@@ -43,3 +43,13 @@ button,input,select,textarea{font:inherit; color:inherit}
 
 .footer{font-size:.78rem; color:var(--muted); text-align:center; padding:8px 16px 28px}
 [hidden]{display:none !important}
+
+/* แถบเครื่องมือบนมือถือ: ปุ่มเรียงเป็นแถว ตัดบรรทัดได้ ไม่ล้นจอ */
+.topbar .right .btn{white-space:nowrap}
+@media (max-width:640px){
+  .topbar{gap:8px 10px}
+  .topbar img{height:26px}
+  .topbar .ttl{font-size:.92rem; line-height:1.35}
+  .topbar .right{margin-left:0; width:100%; flex-wrap:wrap; gap:6px}
+  .topbar .right .btn{padding:6px 10px; font-size:.78rem}
+}

@@ -395,7 +395,7 @@
     var np = npsOf(rs);
     var better = rs.filter(function(r){ return r.vs_last_year === S.vsLastYear[0] || r.vs_last_year === S.vsLastYear[1]; }).length;
     var worse = rs.filter(function(r){ return r.vs_last_year === S.vsLastYear[3]; }).length;
-    var linkCnt = Object.keys(S.links).map(function(k){ return S.links[k].short + ' ' + all.filter(function(r){ return r.link === k; }).length; }).filter(function(t){ return !/ 0$/.test(t); }).join(' · ');
+    var linkCnt = Object.keys(S.links).map(function(k){ return S.links[k].short + ': ' + all.filter(function(r){ return r.link === k; }).length; }).filter(function(t){ return !/ 0$/.test(t); }).join(' · ');
     $('kpis').innerHTML = [
       ['ผู้ตอบแบบประเมิน', n + ' <small>คน</small>', grp === ALL ? linkCnt : ('ทั้งหมด ' + all.length + ' คน')],
       ['ความพึงพอใจต่อ Artwork', f2(sat) + ' <small>/ 5</small>', sat == null ? '' : col(sat).label.replace(/^[^ ]+ /, '')],
