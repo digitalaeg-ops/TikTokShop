@@ -57,6 +57,9 @@
   table.heat td small{font-size:.68rem; opacity:.8}
   table.heat td.na{background:var(--surface-2); color:var(--line-strong)}
   table.heat td.sel{box-shadow:inset 0 0 0 2px var(--ink)}
+  table.heat td.dim{opacity:.22; filter:grayscale(.7)}
+  table.heat th.dim{opacity:.45}
+  table.heat td{transition:opacity .2s, filter .2s}
   .legend{display:flex; flex-wrap:wrap; gap:6px 12px; font-size:.74rem; color:var(--muted); margin-top:10px}
   .legend i{display:inline-block; width:14px; height:10px; border-radius:3px; vertical-align:-1px; margin-right:4px}
 
@@ -293,13 +296,13 @@
     var items = S.core.map(function(c){ return { label:c.label, get:function(a){ return num((a.core || {})[c.id]); } }; })
       .concat([{ label:'ความพึงพอใจโดยรวมต่อ Artwork ของกลุ่ม', tot:1, get:function(a){ return num(a.sat); } }]);
     var h = '<table class="heat"><thead><tr><th class="lbl">หัวข้อ</th>' + cols.map(function(c){
-      return '<th class="' + (c === grp ? 'sel' : '') + '">' + esc(c === 'รวม' ? c : gl(c)) + '</th>';
+      return '<th class="' + (c === grp ? 'sel' : (grp !== ALL ? 'dim' : '')) + '">' + esc(c === 'รวม' ? c : gl(c)) + '</th>';
     }).join('') + '</tr></thead><tbody>';
     items.forEach(function(it){
       h += '<tr' + (it.tot ? ' class="tot"' : '') + '><th class="lbl">' + esc(it.label) + '</th>';
       cols.forEach(function(c){
         var as = c === 'รวม' ? GO.reduce(function(acc, g){ return acc.concat(answersOf(g)); }, []) : answersOf(c);
-        var v = as.map(it.get).filter(function(x){ return x != null; }), a = avg(v), sel = c === grp ? 'sel' : '';
+        var v = as.map(it.get).filter(function(x){ return x != null; }), a = avg(v), sel = c === grp ? 'sel' : (grp !== ALL ? 'dim' : '');
         if(a == null){ h += '<td class="na ' + sel + '">–</td>'; return; }
         var k = col(a);
         h += '<td class="' + sel + '" style="background:' + k.bg + ';color:' + k.fg + '" title="' + esc(it.label + ' · ' + (c === 'รวม' ? c : gl(c)) + ': ' + a.toFixed(2) + ' จาก ' + v.length + ' คำตอบ') + '"><b>' + a.toFixed(1) + '</b><small>n=' + v.length + '</small></td>';
