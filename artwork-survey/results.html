@@ -15,7 +15,12 @@
   .gate input{width:100%; font-size:1.05rem; letter-spacing:.12em; text-transform:uppercase; padding:11px 14px;
     border:1.5px solid var(--line-strong); border-radius:10px; background:var(--surface-2); margin:12px 0}
   .gate input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
-  .gate .err{color:var(--coral); font-size:.86rem; margin-top:10px}
+  .gate .err, .dlg .err{color:var(--coral); font-size:.86rem; margin-top:8px}
+  .dlg-back{position:fixed; inset:0; z-index:950; background:rgba(8,12,14,.5); display:flex; align-items:center; justify-content:center; padding:16px}
+  .dlg{width:min(420px,100%); margin:0}
+  .dlg input{width:100%; font-size:1rem; letter-spacing:.12em; text-transform:uppercase; padding:10px 12px; margin-top:6px;
+    border:1.5px solid var(--line-strong); border-radius:10px; background:var(--surface-2)}
+  .dlg input:focus{outline:none; border-color:var(--coral); box-shadow:0 0 0 3px var(--coral-soft)}
 
   .bar-top{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-bottom:16px}
   .seg{display:inline-flex; flex-wrap:wrap; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:3px}
@@ -125,20 +130,30 @@
     <button class="btn sm" type="button" id="refresh">↻ รีเฟรช</button>
     <button class="btn sm" type="button" id="csv">⬇ CSV</button>
     <button class="btn sm" type="button" id="print">🖨 พิมพ์ / PDF</button>
-    <button class="btn sm" type="button" id="logout">ออก</button>
   </div>
 </header>
 
 <main class="wrap wide">
   <section class="card gate" id="gate">
-    <h2>สรุปผลแบบประเมิน (สำหรับผู้ดูแล)</h2>
-    <p class="muted small" style="margin:0">กรอกรหัสเข้าดูผล — คำตอบทั้งหมดเปิดดูได้เฉพาะผู้มีรหัสเท่านั้น</p>
-    <form id="gateForm" autocomplete="off">
-      <input id="code" type="password" inputmode="text" placeholder="XXXX-XXXX-XXXX" aria-label="รหัสเข้าดูผล" required>
-      <button class="btn primary" type="submit" id="gateBtn" style="width:100%">เข้าดูผล</button>
-    </form>
-    <div class="err" id="gateErr" hidden></div>
+    <h2>สรุปผลแบบประเมิน Artwork Promotion ปี 2569</h2>
+    <p class="muted" style="margin:0" id="gateMsg">กำลังโหลดข้อมูล...</p>
+    <button class="btn primary sm" type="button" id="retry" hidden style="margin-top:12px">↻ ลองใหม่</button>
   </section>
+
+  <div class="dlg-back" id="delDlg" hidden>
+    <form class="dlg card" id="delForm" autocomplete="off">
+      <h3 style="margin:0 0 6px">🗑 ลบคำตอบนี้ถาวร?</h3>
+      <p class="small muted" id="delDesc" style="margin:0 0 12px"></p>
+      <label class="small" for="delCode" style="font-weight:600">รหัสผู้ดูแล (ใช้สำหรับลบคำตอบ)</label>
+      <input id="delCode" type="password" placeholder="XXXX-XXXX-XXXX" aria-label="รหัสผู้ดูแล" required>
+      <div class="err" id="delErr" hidden></div>
+      <p class="small" style="color:var(--coral); margin:8px 0 14px">ลบแล้วกู้คืนไม่ได้</p>
+      <div style="display:flex; gap:8px; justify-content:flex-end">
+        <button class="btn sm" type="button" id="delCancel">ยกเลิก</button>
+        <button class="btn sm primary" type="submit" id="delOk" style="background:var(--coral); border-color:var(--coral)">ลบคำตอบ</button>
+      </div>
+    </form>
+  </div>
 
   <div id="dash" hidden>
     <div class="print-head">
@@ -238,33 +253,29 @@
   function withRow(g){ return all.filter(function(r){ return ga(r, g); }).map(function(r){ return { r:r, a:ga(r, g) }; }); }
 
   // ---------- data ----------
-  function load(code){
-    return fetch(S.supabaseUrl + '/rest/v1/rpc/' + S.rpc, {
+  // ดูผลได้ทุกคน (ไม่ต้องใช้รหัส) · รหัสใช้เฉพาะตอนลบคำตอบ
+  function load(){
+    return fetch(S.supabaseUrl + '/rest/v1/rpc/get_artwork_survey_v2_public', {
       method: 'POST',
       headers: { 'apikey': S.anonKey, 'Authorization': 'Bearer ' + S.anonKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_code: code })
+      body: '{}'
     }).then(function(r){
       if(r.ok) return r.json();
-      return r.json().catch(function(){ return {}; }).then(function(j){
-        var e = new Error(j.message || ('HTTP ' + r.status)); e.invalid = /invalid code/i.test(j.message || ''); throw e;
-      });
+      return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ' ' + t.slice(0, 120)); });
     });
   }
-  function enter(code, data){
-    ss.set(CODEKEY, code); setData(data); fetchedAt = new Date();
+  function enter(data){
+    setData(data); fetchedAt = new Date();
     $('gate').hidden = true; $('dash').hidden = false; $('tools').hidden = false;
     render();
   }
-  $('gateForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    var code = $('code').value.trim().toUpperCase(), btn = $('gateBtn'), err = $('gateErr');
-    if(!code) return;
-    btn.disabled = true; btn.textContent = 'กำลังตรวจสอบ...'; err.hidden = true;
-    load(code).then(function(d){ enter(code, d); }).catch(function(ex){
-      err.textContent = ex.invalid ? 'รหัสไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง' : ('เชื่อมต่อฐานข้อมูลไม่ได้ — ' + ex.message);
-      err.hidden = false;
-    }).then(function(){ btn.disabled = false; btn.textContent = 'เข้าดูผล'; });
-  });
+  function start(){
+    $('gateMsg').textContent = 'กำลังโหลดข้อมูล...'; $('retry').hidden = true;
+    load().then(enter).catch(function(ex){
+      $('gateMsg').textContent = 'โหลดข้อมูลไม่สำเร็จ — ' + ex.message; $('retry').hidden = false;
+    });
+  }
+  $('retry').addEventListener('click', start);
 
   // ---------- colours ----------
   var SCALE = [
@@ -511,21 +522,37 @@
           '<td class="no-print"><button class="btn sm del" type="button" data-del="' + esc(r.id) + '">🗑 ลบ</button></td></tr>';
       }).join('') + '</tbody>';
   }
+  var delId = null;
+  function closeDel(){ $('delDlg').hidden = true; delId = null; }
   $('respTbl').addEventListener('click', function(e){
     var b = e.target.closest('[data-del]'); if(!b) return;
     var id = b.getAttribute('data-del'), r = raw.filter(function(x){ return x.id === id; })[0]; if(!r) return;
-    var desc = (S.links[r.link] ? S.links[r.link].short : r.link) + ' · ' + (r.groups || []).map(gl).join(', ') + ' · ' + r.role + ' · ส่งเมื่อ ' + new Date(r.created_at).toLocaleString('th-TH');
-    if(!window.confirm('ลบคำตอบนี้ถาวร?\n\n' + desc + '\n\nลบแล้วกู้คืนไม่ได้')) return;
-    var code = ss.get(CODEKEY); b.disabled = true; b.textContent = 'กำลังลบ...';
+    delId = id;
+    $('delDesc').textContent = (S.links[r.link] ? S.links[r.link].short : r.link) + ' · ' + (r.groups || []).map(gl).join(', ') + ' · ' + r.role + ' · ส่งเมื่อ ' + new Date(r.created_at).toLocaleString('th-TH');
+    $('delCode').value = ss.get(CODEKEY) || '';
+    $('delErr').hidden = true; $('delOk').disabled = false; $('delOk').textContent = 'ลบคำตอบ';
+    $('delDlg').hidden = false; $('delCode').focus();
+  });
+  $('delCancel').addEventListener('click', closeDel);
+  $('delDlg').addEventListener('click', function(e){ if(e.target === this) closeDel(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !$('delDlg').hidden) closeDel(); });
+  $('delForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var code = $('delCode').value.trim().toUpperCase(), btn = $('delOk'), err = $('delErr');
+    if(!code || !delId) return;
+    btn.disabled = true; btn.textContent = 'กำลังลบ...'; err.hidden = true;
     fetch(S.supabaseUrl + '/rest/v1/rpc/delete_artwork_survey_v2_response', {
       method: 'POST',
       headers: { 'apikey': S.anonKey, 'Authorization': 'Bearer ' + S.anonKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_code: code, p_id: id })
+      body: JSON.stringify({ p_code: code, p_id: delId })
     }).then(function(res){
-      if(!res.ok) return res.text().then(function(t){ throw new Error('HTTP ' + res.status + ' ' + t.slice(0, 120)); });
-      return load(code);
-    }).then(function(d){ setData(d); fetchedAt = new Date(); render(); })
-      .catch(function(ex){ alert('ลบไม่สำเร็จ: ' + ex.message); b.disabled = false; b.textContent = '🗑 ลบ'; });
+      if(!res.ok) return res.text().then(function(t){ throw new Error(/invalid code/i.test(t) ? 'รหัสไม่ถูกต้อง' : ('HTTP ' + res.status)); });
+      ss.set(CODEKEY, code); closeDel();
+      return load().then(function(d){ setData(d); fetchedAt = new Date(); render(); });
+    }).catch(function(ex){
+      err.textContent = 'ลบไม่สำเร็จ: ' + ex.message; err.hidden = false;
+      btn.disabled = false; btn.textContent = 'ลบคำตอบ';
+    });
   });
 
   // ---------- tools ----------
@@ -537,13 +564,12 @@
   }
   document.addEventListener('click', function(e){ var b = e.target.closest('[data-copy]'); if(b) copyLink(b, b.getAttribute('data-copy')); });
   $('refresh').addEventListener('click', function(){
-    var code = ss.get(CODEKEY), btn = this; if(!code) return;
+    var btn = this;
     btn.disabled = true;
-    load(code).then(function(d){ setData(d); fetchedAt = new Date(); render(); })
+    load().then(function(d){ setData(d); fetchedAt = new Date(); render(); })
       .catch(function(ex){ alert('รีเฟรชไม่สำเร็จ: ' + ex.message); })
       .then(function(){ btn.disabled = false; });
   });
-  $('logout').addEventListener('click', function(){ ss.del(CODEKEY); location.reload(); });
   $('print').addEventListener('click', function(){ window.print(); });
   $('csv').addEventListener('click', function(){
     var rs = rows();
@@ -577,9 +603,7 @@
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
   });
 
-  // ---------- auto-login from this tab's session ----------
-  var saved = ss.get(CODEKEY);
-  if(saved){ load(saved).then(function(d){ enter(saved, d); }).catch(function(){ ss.del(CODEKEY); }); }
+  start();
 })();
 </script>
 </body>
